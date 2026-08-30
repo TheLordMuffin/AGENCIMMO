@@ -39,17 +39,32 @@ Le prototype n'est pas une suite de captures :
 Pour repartir de zéro pendant une démo : vider le stockage du site, ou
 exécuter `localStorage.removeItem('agencimmo.demo.v1')` dans la console.
 
-## Regarder la page
+## Les deux fichiers
 
-Publiée comme Artifact Claude, ou en local :
+- `showcase.html` — la source. Écrite sans `<!doctype>` ni `<html>` : c'est
+  le format attendu par l'outil Artifact, qui fournit lui-même l'enveloppe.
+- `index.html` — **généré**, ne pas modifier à la main. C'est `showcase.html`
+  enveloppé dans un document autonome, pour GitHub Pages ou une ouverture
+  directe dans un navigateur.
+
+Après toute modification de `showcase.html` :
 
 ```sh
-./build.sh && open dist/index.html
+./build.sh    # régénère index.html
 ```
 
-`showcase.html` est écrit sans `<!doctype>` ni `<html>` — c'est le format
-attendu par l'outil Artifact, qui fournit l'enveloppe. `build.sh` la
-rajoute pour un usage autonome.
+## Mettre la démo en ligne
+
+Le dépôt est prêt pour GitHub Pages : `index.html` est à la racine de la
+branche par défaut, aucune configuration de build n'est nécessaire.
+
+Dans **Settings → Pages** : Source « Deploy from a branch », branche
+`claude/real-estate-showcase-app-xz5vek`, dossier `/ (root)`. La page sort
+sur `https://thelordmuffin.github.io/AGENCIMMO/` après une minute.
+
+GitHub Pages ne dessert pas les dépôts privés sur le plan gratuit : il faut
+soit rendre le dépôt public, soit un plan payant. La page de réglages
+l'indique au moment de l'activation.
 
 ## Chiffres
 

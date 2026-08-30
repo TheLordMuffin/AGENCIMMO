@@ -1,0 +1,1809 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="AGENCIMMO — marketplace immobiliere entre particuliers. Prototype et presentation du projet."><style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>AGENCIMMO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ============================================================
+   AGENCIMMO — vitrine projet
+   Palette « clé en laiton & pin » : volontairement à l'écart du
+   bleu proptech. Monde visuel unique, assumé, peint explicitement.
+   ============================================================ */
+:root{
+  --ink:#08130F;
+  --pine-950:#0B1913;
+  --pine-900:#0F231B;
+  --pine-800:#153125;
+  --pine-700:#1D4131;
+  --pine-600:#26543F;
+  --pine:#0E5C43;
+  --pine-bright:#12775A;
+  --brass:#C89A47;
+  --brass-bright:#E3B95F;
+  --brass-dim:#8E6D31;
+  --paper:#EEF2EA;
+  --paper-2:#E4EADE;
+  --paper-3:#D7E0D0;
+  --chalk:#FBFCF9;
+  --on-dark:#E9EFE6;
+  --on-dark-mute:#9BB0A3;
+  --on-dark-faint:#6C8377;
+  --on-light:#0F1F18;
+  --on-light-mute:#55685D;
+  --rust:#B4523A;
+  --line-dark:rgba(200,154,71,.20);
+  --line-light:rgba(15,35,27,.13);
+
+  --f-display:"Fraunces","Iowan Old Style",Georgia,serif;
+  --f-sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+
+  --wrap:1180px;
+  --r-s:10px; --r-m:16px; --r-l:26px;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--pine-900);
+  color:var(--on-dark);
+  font-family:var(--f-sans);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brass-bright);outline-offset:3px;border-radius:4px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+.wrap{width:100%;max-width:var(--wrap);margin-inline:auto;padding-inline:24px}
+.wrap-narrow{width:100%;max-width:820px;margin-inline:auto;padding-inline:24px}
+
+/* ---------- voix typographiques ---------- */
+.eyebrow{
+  font-family:var(--f-mono);
+  font-size:11px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--brass);
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--brass);flex:none}
+.eyebrow.on-light{color:var(--pine)}
+.eyebrow.on-light::before{background:var(--pine)}
+
+h1,h2,h3{font-family:var(--f-display);font-weight:500;text-wrap:balance;margin:0;line-height:1.04;letter-spacing:-.02em}
+h1{font-size:clamp(2.9rem,7.2vw,5.4rem);font-variation-settings:"SOFT" 40,"WONK" 1,"opsz" 110}
+h2{font-size:clamp(2rem,4.4vw,3.3rem);font-variation-settings:"SOFT" 30,"WONK" 1,"opsz" 90}
+h3{font-size:clamp(1.15rem,2vw,1.45rem);font-variation-settings:"SOFT" 20,"opsz" 40;letter-spacing:-.01em}
+p{margin:0}
+.lede{font-size:clamp(1.05rem,1.7vw,1.28rem);line-height:1.62;color:var(--on-dark-mute);max-width:62ch}
+.lede.on-light{color:var(--on-light-mute)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+/* ---------- sections ---------- */
+section{position:relative}
+.band-dark{background:var(--pine-900);color:var(--on-dark)}
+.band-deep{background:var(--pine-950);color:var(--on-dark)}
+.band-light{background:var(--paper);color:var(--on-light)}
+.band-light .lede{color:var(--on-light-mute)}
+.pad{padding-block:clamp(72px,10vw,132px)}
+.pad-s{padding-block:clamp(52px,7vw,86px)}
+.sec-head{display:flex;flex-direction:column;gap:18px;margin-bottom:clamp(38px,5vw,64px)}
+.rule{height:1px;background:var(--line-dark);border:0;margin:0}
+.band-light .rule{background:var(--line-light)}
+
+/* ============================ HÉRO ============================ */
+.hero{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 78% 8%, rgba(200,154,71,.16) 0%, rgba(200,154,71,0) 58%),
+    radial-gradient(90% 70% at 8% 100%, rgba(18,119,90,.28) 0%, rgba(18,119,90,0) 60%),
+    var(--pine-950);
+  padding-block:clamp(56px,7vw,84px) 0;
+}
+.hero-grid{
+  display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);
+  gap:clamp(28px,4vw,64px);align-items:center;
+}
+.hero-copy{display:flex;flex-direction:column;gap:26px;padding-block:clamp(20px,4vw,56px)}
+h1 em{font-style:italic;color:var(--brass-bright);font-variation-settings:"SOFT" 60,"WONK" 1,"opsz" 130}
+.hero-stats{display:flex;flex-wrap:wrap;gap:10px}
+.chip-stat{
+  display:flex;align-items:baseline;gap:9px;
+  border:1px solid var(--line-dark);border-radius:999px;
+  padding:9px 16px 9px 14px;background:rgba(200,154,71,.05);
+}
+.chip-stat b{font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--brass-bright);font-variant-numeric:tabular-nums}
+.chip-stat span{font-size:12.5px;color:var(--on-dark-mute);letter-spacing:.01em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 22px;border-radius:999px;
+  font-weight:600;font-size:14.5px;letter-spacing:.01em;
+  transition:transform .18s cubic-bezier(.2,.8,.3,1),background .18s,box-shadow .18s;
+  text-decoration:none;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-brass{background:var(--brass);color:var(--ink);box-shadow:0 8px 24px -10px rgba(200,154,71,.75)}
+.btn-brass:hover{background:var(--brass-bright)}
+.btn-ghost{border:1px solid var(--line-dark);color:var(--on-dark)}
+.btn-ghost:hover{border-color:var(--brass);background:rgba(200,154,71,.08)}
+.hero-note{font-family:var(--f-mono);font-size:11.5px;color:var(--on-dark-faint);letter-spacing:.03em}
+
+.hero-stage{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:520px}
+.hero-glow{
+  position:absolute;inset:auto 0 -6% 0;height:78%;
+  background:radial-gradient(60% 60% at 50% 60%, rgba(200,154,71,.20), rgba(200,154,71,0) 70%);
+  filter:blur(6px);pointer-events:none;
+}
+
+/* ============================ TÉLÉPHONE ============================ */
+.phone{
+  position:relative;width:344px;max-width:100%;flex:none;
+  border-radius:46px;padding:11px;
+  background:linear-gradient(160deg,#26302B 0%,#0D1512 42%,#212B26 100%);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.10) inset,
+    0 44px 90px -30px rgba(0,0,0,.85),
+    0 0 0 1px rgba(255,255,255,.05);
+}
+.phone::after{
+  content:"";position:absolute;left:50%;top:5px;transform:translateX(-50%);
+  width:118px;height:5px;border-radius:99px;background:rgba(255,255,255,.13);
+}
+.screen{
+  position:relative;
+  height:712px;border-radius:36px;overflow:hidden;
+  background:var(--chalk);color:var(--on-light);
+  display:flex;flex-direction:column;
+  isolation:isolate;
+}
+.statusbar{
+  flex:none;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 22px 4px;font-family:var(--f-mono);font-size:11.5px;font-weight:600;
+  color:var(--on-light);letter-spacing:.02em;
+}
+.statusbar .sb-icons{display:flex;gap:5px;align-items:center}
+.sb-bar{width:3px;border-radius:1px;background:currentColor}
+.notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:82px;height:22px;border-radius:99px;background:#0D1512;z-index:6}
+
+/* corps scrollable de l'écran */
+.views{position:relative;flex:1;overflow:hidden}
+.view{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  background:var(--chalk);
+  opacity:0;visibility:hidden;transform:translateY(10px);
+  transition:opacity .26s ease,transform .32s cubic-bezier(.2,.8,.3,1),visibility .26s;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.view::-webkit-scrollbar{display:none}
+.view.on{opacity:1;visibility:visible;transform:none;z-index:2}
+.view-pad{padding:0 0 22px}
+
+/* barre de navigation basse */
+.tabbar{
+  flex:none;display:grid;grid-template-columns:repeat(5,1fr);
+  align-items:center;gap:2px;
+  padding:9px 8px calc(9px + env(safe-area-inset-bottom,0px));
+  background:rgba(251,252,249,.94);
+  backdrop-filter:blur(14px);
+  border-top:1px solid var(--line-light);
+}
+.tab{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:5px 2px;border-radius:12px;
+  font-size:9.5px;font-weight:600;letter-spacing:.02em;
+  color:#8C9A92;transition:color .16s;
+}
+.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tab.on{color:var(--pine)}
+.tab-fab{position:relative}
+.tab-fab .fab{
+  width:40px;height:40px;border-radius:14px;margin-top:-6px;
+  background:var(--pine);color:var(--chalk);
+  display:grid;place-items:center;
+  box-shadow:0 8px 18px -7px rgba(14,92,67,.85);
+  transition:transform .18s cubic-bezier(.2,.8,.3,1);
+}
+.tab-fab:hover .fab{transform:translateY(-2px) rotate(90deg)}
+.tab-fab .fab svg{width:20px;height:20px;stroke-width:2.1}
+
+/* ---------- en-tête de l'app ---------- */
+.app-head{padding:6px 18px 12px;display:flex;flex-direction:column;gap:12px;background:var(--chalk)}
+.brandline{display:flex;align-items:center;justify-content:space-between}
+.brandmark{display:flex;align-items:center;gap:8px}
+.brandmark .key{width:24px;height:24px}
+.brandmark b{font-family:var(--f-display);font-size:19px;font-weight:600;letter-spacing:-.02em;font-variation-settings:"SOFT" 30,"WONK" 1}
+.icon-btn{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:var(--on-light);transition:background .16s}
+.icon-btn:hover{background:var(--paper-2)}
+.icon-btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dot-badge{position:relative}
+.dot-badge::after{content:"";position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:99px;background:var(--rust);border:1.5px solid var(--chalk)}
+
+.searchbar{
+  display:flex;align-items:center;gap:9px;
+  padding:11px 14px;border-radius:14px;
+  background:var(--paper-2);color:var(--on-light-mute);
+  font-size:13.5px;
+}
+.searchbar svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;flex:none}
+.searchbar input{border:0;background:none;font:inherit;color:var(--on-light);flex:1;min-width:0;outline:none}
+.searchbar input::placeholder{color:#8C9A92}
+
+.chips{display:flex;gap:7px;overflow-x:auto;padding:0 18px 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:none;padding:7px 13px;border-radius:999px;
+  border:1px solid var(--line-light);
+  font-size:12px;font-weight:600;color:var(--on-light-mute);
+  white-space:nowrap;transition:all .16s;
+}
+.chip:hover{border-color:var(--pine);color:var(--pine)}
+.chip.on{background:var(--pine);border-color:var(--pine);color:var(--chalk)}
+
+.sec-label{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:4px 18px 10px;
+}
+.sec-label b{font-family:var(--f-display);font-size:16px;font-weight:600;font-variation-settings:"SOFT" 20}
+.sec-label span{font-family:var(--f-mono);font-size:10.5px;color:var(--on-light-mute);letter-spacing:.04em}
+
+/* ---------- carte annonce ---------- */
+.cards{display:flex;flex-direction:column;gap:16px;padding:0 18px}
+.card{
+  border-radius:18px;overflow:hidden;background:var(--chalk);color:var(--on-light);
+  border:1px solid var(--line-light);
+  text-align:left;width:100%;display:block;
+  transition:transform .2s cubic-bezier(.2,.8,.3,1),box-shadow .2s,border-color .2s;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(15,35,27,.5);border-color:rgba(14,92,67,.35)}
+.card-media{display:block;position:relative;aspect-ratio:16/11;background:var(--paper-2);overflow:hidden}
+.card-media svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.card-tags{display:flex;position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 60px)}
+.tag{
+  font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 9px;border-radius:7px;
+  background:rgba(251,252,249,.93);color:var(--pine);
+  backdrop-filter:blur(4px);
+}
+.tag.mine{background:var(--brass);color:var(--ink)}
+.tag.new{background:var(--pine);color:var(--chalk)}
+.heart{
+  position:absolute;top:9px;right:9px;width:32px;height:32px;border-radius:11px;
+  display:grid;place-items:center;
+  background:rgba(251,252,249,.93);backdrop-filter:blur(4px);
+  color:var(--on-light);transition:transform .16s,color .16s;
+}
+.heart:hover{transform:scale(1.09)}
+.heart svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
+.heart.on{color:var(--rust)}
+.heart.on svg{fill:var(--rust)}
+.card-body{display:flex;padding:12px 13px 14px;display:flex;flex-direction:column;gap:7px}
+.card-price{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.card-price b{font-family:var(--f-mono);font-size:17px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.card-price i{font-style:normal;font-family:var(--f-mono);font-size:10.5px;color:var(--on-light-mute)}
+.card-title{font-size:13.5px;font-weight:600;line-height:1.32;color:var(--on-light)}
+.card-meta{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--on-light-mute);flex-wrap:wrap}
+.card-meta .sep{width:3px;height:3px;border-radius:99px;background:#B4C0B8}
+.saving{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--f-mono);font-size:10.5px;font-weight:500;
+  color:var(--brass-dim);background:rgba(200,154,71,.13);
+  padding:5px 9px;border-radius:7px;align-self:flex-start;
+}
+.dpe{
+  font-family:var(--f-mono);font-size:10px;font-weight:600;
+  width:19px;height:19px;border-radius:5px;display:grid;place-items:center;color:var(--chalk);
+}
+
+/* ---------- fiche annonce ---------- */
+.detail-hero{position:relative;aspect-ratio:16/12;background:var(--paper-2)}
+.detail-hero svg{position:absolute;inset:0;width:100%;height:100%}
+.detail-back{
+  position:absolute;top:12px;left:12px;width:34px;height:34px;border-radius:12px;
+  display:grid;place-items:center;background:rgba(251,252,249,.94);backdrop-filter:blur(4px);color:var(--on-light);
+}
+.detail-back svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+.dots i{width:5px;height:5px;border-radius:99px;background:rgba(251,252,249,.55)}
+.dots i.on{width:16px;background:var(--chalk)}
+.detail-body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:16px}
+.detail-price{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+.detail-price b{font-family:var(--f-mono);font-size:26px;font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.detail-price small{font-family:var(--f-mono);font-size:10.5px;color:var(--on-light-mute);display:block;margin-top:5px}
+.specs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.spec{
+  border:1px solid var(--line-light);border-radius:12px;padding:9px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;
+}
+.spec b{font-family:var(--f-mono);font-size:13px;font-weight:600}
+.spec span{font-size:9.5px;color:var(--on-light-mute);letter-spacing:.02em}
+.prose{font-size:13px;line-height:1.62;color:var(--on-light-mute)}
+.seller{
+  display:flex;align-items:center;gap:11px;
+  border:1px solid var(--line-light);border-radius:16px;padding:12px;
+}
+.avatar{
+  width:42px;height:42px;border-radius:13px;flex:none;display:grid;place-items:center;
+  font-family:var(--f-display);font-size:17px;font-weight:600;color:var(--chalk);
+}
+.seller-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.seller-info b{font-size:13.5px;font-weight:600}
+.stars{display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:11px;color:var(--on-light-mute)}
+.stars svg{width:12px;height:12px;fill:var(--brass);stroke:none}
+.badge-verif{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--pine);background:rgba(14,92,67,.1);padding:4px 8px;border-radius:6px;
+}
+.badge-verif svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.review{border-top:1px solid var(--line-light);padding-top:12px;display:flex;flex-direction:column;gap:6px}
+.review-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600}
+.review p{font-size:12.5px;line-height:1.55;color:var(--on-light-mute)}
+.cta-row{display:flex;gap:9px;position:sticky;bottom:0;padding-top:4px}
+.btn-app{
+  flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px;border-radius:14px;font-size:13.5px;font-weight:600;
+  transition:transform .16s,background .16s,box-shadow .16s;
+}
+.btn-app:hover{transform:translateY(-2px)}
+.btn-app svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.btn-primary{background:var(--pine);color:var(--chalk);box-shadow:0 10px 22px -12px rgba(14,92,67,.9)}
+.btn-outline{border:1.5px solid var(--line-light);color:var(--on-light);flex:0 0 auto;padding-inline:18px}
+.btn-outline:hover{border-color:var(--pine);color:var(--pine)}
+
+/* ---------- dépôt d'annonce ---------- */
+.wizard{padding:6px 18px 20px;display:flex;flex-direction:column;gap:16px}
+.steps{display:flex;align-items:center;gap:6px}
+.step-pip{flex:1;height:3px;border-radius:99px;background:var(--paper-3);overflow:hidden}
+.step-pip i{display:block;height:100%;width:0;background:var(--pine);border-radius:99px;transition:width .4s cubic-bezier(.2,.8,.3,1)}
+.step-pip.done i,.step-pip.now i{width:100%}
+.step-title{display:flex;flex-direction:column;gap:5px}
+.step-title span{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--pine)}
+.step-title b{font-family:var(--f-display);font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.step-title p{font-size:12.5px;color:var(--on-light-mute);line-height:1.5}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--on-light)}
+.field input,.field select,.field textarea{
+  width:100%;font:inherit;font-size:13.5px;color:var(--on-light);
+  padding:11px 13px;border-radius:12px;
+  border:1.5px solid var(--line-light);background:var(--chalk);
+  outline:none;transition:border-color .16s,box-shadow .16s;
+}
+.field textarea{resize:none;line-height:1.5;min-height:74px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pine);box-shadow:0 0 0 3px rgba(14,92,67,.12)}
+.field input::placeholder,.field textarea::placeholder{color:#9AA79F}
+.field .hint{font-size:10.5px;color:var(--on-light-mute)}
+.field.err input,.field.err select{border-color:var(--rust)}
+.field .err-msg{font-size:10.5px;color:var(--rust);font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pickers{display:flex;gap:7px;flex-wrap:wrap}
+.pick{
+  padding:9px 13px;border-radius:11px;border:1.5px solid var(--line-light);
+  font-size:12.5px;font-weight:600;color:var(--on-light-mute);transition:all .16s;
+}
+.pick:hover{border-color:var(--pine);color:var(--pine)}
+.pick.on{background:var(--pine);border-color:var(--pine);color:var(--chalk)}
+.stepper{display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--line-light);border-radius:12px;padding:6px 8px}
+.stepper b{font-family:var(--f-mono);font-size:15px;font-weight:600}
+.stepper button{width:28px;height:28px;border-radius:9px;background:var(--paper-2);display:grid;place-items:center;font-size:16px;line-height:1;color:var(--pine);font-weight:600;transition:background .16s}
+.stepper button:hover{background:var(--paper-3)}
+.stepper .lbl{font-size:10px;color:var(--on-light-mute);letter-spacing:.02em;display:block;text-align:center}
+
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.photo-slot{
+  position:relative;aspect-ratio:1;border-radius:13px;overflow:hidden;
+  border:1.5px dashed var(--line-light);background:var(--paper-2);
+  display:grid;place-items:center;color:var(--on-light-mute);transition:all .16s;
+}
+.photo-slot:hover{border-color:var(--pine);color:var(--pine)}
+.photo-slot svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.photo-slot.filled{border-style:solid;border-color:transparent;background:var(--paper-3)}
+.photo-slot.filled img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-slot .illus-wrap{position:absolute;inset:0;display:block}
+.photo-slot .illus-wrap svg{width:100%;height:100%;display:block}
+.photo-slot .rm{
+  position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:7px;z-index:2;
+  background:rgba(11,25,19,.72);color:var(--chalk);display:grid;place-items:center;font-size:12px;line-height:1;
+}
+.photo-slot .cover-tag{
+  position:absolute;bottom:4px;left:4px;z-index:2;
+  font-family:var(--f-mono);font-size:8px;font-weight:600;letter-spacing:.06em;
+  background:var(--brass);color:var(--ink);padding:3px 6px;border-radius:5px;
+}
+.estim{
+  border-radius:16px;padding:14px;
+  background:linear-gradient(150deg,rgba(14,92,67,.09),rgba(200,154,71,.11));
+  border:1px solid rgba(14,92,67,.18);
+  display:flex;flex-direction:column;gap:9px;
+}
+.estim-top{display:flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--pine);font-weight:600}
+.estim-top svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.estim b{font-family:var(--f-mono);font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.estim .range{font-family:var(--f-mono);font-size:11px;color:var(--on-light-mute)}
+.gauge{height:5px;border-radius:99px;background:var(--paper-3);position:relative;overflow:hidden}
+.gauge i{position:absolute;top:0;bottom:0;background:var(--pine);border-radius:99px;transition:left .5s cubic-bezier(.2,.8,.3,1),width .5s}
+.recap{border:1px solid var(--line-light);border-radius:16px;overflow:hidden}
+.recap-row{display:flex;justify-content:space-between;gap:12px;padding:10px 13px;font-size:12.5px;border-bottom:1px solid var(--line-light)}
+.recap-row:last-child{border-bottom:0}
+.recap-row span{color:var(--on-light-mute)}
+.recap-row b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.wiz-nav{display:flex;gap:9px;padding-top:2px}
+
+/* écran de succès */
+.success{padding:30px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;min-height:100%;justify-content:center}
+.success-mark{width:66px;height:66px;border-radius:22px;background:var(--pine);display:grid;place-items:center;color:var(--chalk);box-shadow:0 16px 32px -14px rgba(14,92,67,.9)}
+.success-mark svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.success h4{font-family:var(--f-display);font-size:23px;font-weight:600;margin:0;letter-spacing:-.02em;line-height:1.15}
+.success p{font-size:13px;color:var(--on-light-mute);line-height:1.55;max-width:30ch}
+.success-stat{display:flex;gap:8px;width:100%;margin-top:2px}
+.success-stat div{flex:1;border:1px solid var(--line-light);border-radius:13px;padding:10px 6px}
+.success-stat b{display:block;font-family:var(--f-mono);font-size:15px;font-weight:600}
+.success-stat span{font-size:9.5px;color:var(--on-light-mute)}
+
+/* ---------- messages ---------- */
+.threads{padding:4px 0 10px}
+.thread{display:flex;gap:11px;padding:11px 18px;width:100%;text-align:left;transition:background .16s;align-items:center}
+.thread:hover{background:var(--paper)}
+.thread-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.thread-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.thread-top b{font-size:13px;font-weight:600}
+.thread-top span{font-family:var(--f-mono);font-size:10px;color:var(--on-light-mute)}
+.thread p{font-size:12px;color:var(--on-light-mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.unread{width:8px;height:8px;border-radius:99px;background:var(--pine);flex:none}
+.chat{display:flex;flex-direction:column;height:100%}
+.chat-head{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line-light);flex:none}
+.chat-head b{font-size:13.5px;font-weight:600}
+.chat-head small{display:block;font-size:10.5px;color:var(--pine);font-weight:600}
+.chat-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:9px;background:var(--paper)}
+.chat-body::-webkit-scrollbar{display:none}
+.bubble{max-width:78%;padding:10px 13px;border-radius:16px;font-size:12.8px;line-height:1.45}
+.bubble.them{background:var(--chalk);border:1px solid var(--line-light);border-bottom-left-radius:6px;align-self:flex-start}
+.bubble.me{background:var(--pine);color:var(--chalk);border-bottom-right-radius:6px;align-self:flex-end}
+.bubble time{display:block;font-family:var(--f-mono);font-size:9px;opacity:.6;margin-top:4px}
+.chat-sys{align-self:center;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.05em;color:var(--on-light-mute);background:var(--paper-3);padding:5px 11px;border-radius:99px;text-transform:uppercase}
+.chat-input{flex:none;display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--line-light);background:var(--chalk);align-items:center}
+.chat-input .searchbar{flex:1}
+.send{width:38px;height:38px;border-radius:13px;background:var(--pine);color:var(--chalk);display:grid;place-items:center;flex:none}
+.send svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- profil / tableau de bord vendeur ---------- */
+.profile{padding:8px 18px 20px;display:flex;flex-direction:column;gap:16px}
+.profile-head{display:flex;align-items:center;gap:12px}
+.profile-head .avatar{width:52px;height:52px;border-radius:17px;font-size:20px}
+.profile-head b{font-family:var(--f-display);font-size:19px;font-weight:600;letter-spacing:-.02em;display:block}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{border:1px solid var(--line-light);border-radius:14px;padding:11px 10px;display:flex;flex-direction:column;gap:2px}
+.kpi b{font-family:var(--f-mono);font-size:18px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.kpi span{font-size:9.5px;color:var(--on-light-mute);letter-spacing:.02em}
+.kpi .delta{font-family:var(--f-mono);font-size:9.5px;color:var(--pine);font-weight:600}
+.econo{
+  border-radius:18px;padding:16px;color:var(--on-dark);
+  background:linear-gradient(148deg,var(--pine-800),var(--pine-950));
+  display:flex;flex-direction:column;gap:7px;position:relative;overflow:hidden;
+}
+.econo::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(200,154,71,.30),transparent 68%)}
+.econo span{font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--brass)}
+.econo b{font-family:var(--f-mono);font-size:27px;font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.econo p{font-size:11.5px;color:var(--on-dark-mute);line-height:1.5;position:relative;z-index:1}
+.mini-list{display:flex;flex-direction:column;gap:9px}
+.mini{display:flex;gap:11px;align-items:center;border:1px solid var(--line-light);border-radius:14px;padding:9px;text-align:left;width:100%;transition:border-color .16s}
+.mini:hover{border-color:var(--pine)}
+.mini-thumb{width:56px;height:44px;border-radius:10px;overflow:hidden;flex:none;position:relative;background:var(--paper-2)}
+.mini-thumb svg,.mini-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.detail-hero svg,.card-media svg{display:block}
+.mini-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mini-main b{font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-main span{font-family:var(--f-mono);font-size:11px;color:var(--on-light-mute)}
+.status-pill{font-family:var(--f-mono);font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px;border-radius:6px;background:rgba(14,92,67,.1);color:var(--pine);flex:none}
+.status-pill.wait{background:rgba(200,154,71,.16);color:var(--brass-dim)}
+
+.empty{padding:38px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--on-light-mute)}
+.empty svg{width:34px;height:34px;stroke:currentColor;fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.6}
+.empty b{font-family:var(--f-display);font-size:16px;color:var(--on-light);font-weight:600}
+.empty p{font-size:12.5px;max-width:26ch;line-height:1.5}
+
+/* toast dans l'app */
+.toast{
+  position:absolute;left:14px;right:14px;bottom:14px;z-index:20;
+  background:var(--pine-950);color:var(--on-dark);
+  border-radius:14px;padding:12px 14px;
+  display:flex;align-items:center;gap:10px;font-size:12.5px;
+  box-shadow:0 16px 34px -16px rgba(0,0,0,.8);
+  transform:translateY(130%);transition:transform .34s cubic-bezier(.2,.9,.3,1);
+  pointer-events:none; /* ne doit jamais bloquer une carte pendant ses 2,6 s */
+}
+.toast.on{transform:none}
+.toast svg{width:17px;height:17px;stroke:var(--brass);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ============================ SECTION PRODUIT ============================ */
+.product-grid{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:clamp(32px,5vw,80px);align-items:start;
+}
+.feature-list{display:flex;flex-direction:column;gap:8px;margin-top:26px}
+.feature{
+  display:flex;gap:16px;align-items:flex-start;
+  padding:16px 18px;border-radius:16px;
+  border:1px solid transparent;background:transparent;
+  text-align:left;width:100%;
+  transition:background .2s,border-color .2s;
+}
+.feature:hover{background:rgba(200,154,71,.05);border-color:var(--line-dark)}
+.feature.on{background:rgba(200,154,71,.09);border-color:rgba(200,154,71,.34)}
+.feature-idx{
+  font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.06em;
+  color:var(--brass);flex:none;padding-top:4px;width:26px;
+}
+.feature-txt b{display:block;font-family:var(--f-display);font-size:17px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px;font-variation-settings:"SOFT" 20}
+.feature-txt p{font-size:13.5px;color:var(--on-dark-mute);line-height:1.55;max-width:44ch}
+.phone-col{position:sticky;top:32px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.phone-hint{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--on-dark-faint);display:flex;align-items:center;gap:8px;
+}
+.phone-hint svg{width:14px;height:14px;stroke:var(--brass);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ============================ PITCH ============================ */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,4.5vw,70px);align-items:start}
+.cols-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2vw,26px)}
+.cols-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,26px)}
+
+.figure-block{display:flex;flex-direction:column;gap:6px;padding-block:6px}
+.figure-block b{font-family:var(--f-display);font-size:clamp(2.4rem,5vw,3.7rem);font-weight:600;letter-spacing:-.03em;line-height:.98;font-variation-settings:"SOFT" 20,"WONK" 1;color:var(--brass-bright)}
+.band-light .figure-block b{color:var(--pine)}
+.figure-block span{font-size:13.5px;color:var(--on-dark-mute);line-height:1.5;max-width:30ch}
+.band-light .figure-block span{color:var(--on-light-mute)}
+
+.panel{
+  border:1px solid var(--line-dark);border-radius:var(--r-l);
+  padding:clamp(20px,2.4vw,30px);
+  display:flex;flex-direction:column;gap:12px;
+  background:rgba(200,154,71,.035);
+}
+.band-light .panel{border-color:var(--line-light);background:rgba(255,255,255,.55)}
+.panel h3{margin-bottom:2px}
+.panel p{font-size:14px;color:var(--on-dark-mute);line-height:1.6}
+.band-light .panel p{color:var(--on-light-mute)}
+.panel .price-tag{font-family:var(--f-mono);font-size:14px;font-weight:600;color:var(--brass)}
+.band-light .panel .price-tag{color:var(--pine)}
+
+/* étapes — séquence réelle, donc numérotées */
+.steps-list{display:flex;flex-direction:column}
+.step-row{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(18px,3vw,38px);
+  padding-block:clamp(22px,3vw,34px);
+  border-top:1px solid var(--line-light);
+}
+.step-row:last-child{border-bottom:1px solid var(--line-light)}
+.step-n{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+  color:var(--pine);padding-top:7px;
+}
+.step-c h3{margin-bottom:8px}
+.step-c p{font-size:14.5px;color:var(--on-light-mute);line-height:1.62;max-width:56ch}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-light);border-radius:var(--r-l);overflow:hidden;border:1px solid var(--line-light)}
+.compare>div{background:var(--paper);padding:clamp(20px,2.4vw,30px);display:flex;flex-direction:column;gap:14px}
+.compare>div.us{background:var(--pine-900);color:var(--on-dark)}
+.compare h4{margin:0;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--on-light-mute)}
+.compare>div.us h4{color:var(--brass)}
+.compare .big{font-family:var(--f-display);font-size:clamp(2rem,4vw,3rem);font-weight:600;letter-spacing:-.03em;line-height:1}
+.compare li{font-size:13.5px;line-height:1.5;color:var(--on-light-mute);display:flex;gap:9px;align-items:flex-start}
+.compare>div.us li{color:var(--on-dark-mute)}
+.compare ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.compare li::before{content:"—";color:var(--rust);flex:none;font-family:var(--f-mono)}
+.compare>div.us li::before{content:"+";color:var(--brass)}
+
+.roadmap{display:flex;flex-direction:column;gap:0}
+.rm-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:clamp(14px,2.4vw,30px);padding-block:20px;border-top:1px solid var(--line-dark);align-items:baseline}
+.rm-row:last-child{border-bottom:1px solid var(--line-dark)}
+.rm-when{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--brass)}
+.rm-what b{display:block;font-family:var(--f-display);font-size:18px;font-weight:600;letter-spacing:-.01em;margin-bottom:5px}
+.rm-what p{font-size:13.5px;color:var(--on-dark-mute);line-height:1.55;max-width:56ch}
+
+.ask-list{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.ask{display:flex;gap:13px;align-items:flex-start;font-size:14.5px;line-height:1.55;color:var(--on-dark-mute)}
+.ask-mark{flex:none;width:22px;height:22px;border-radius:7px;background:rgba(200,154,71,.15);color:var(--brass);display:grid;place-items:center;margin-top:2px}
+.ask-mark svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ask b{color:var(--on-dark);font-weight:600}
+
+.footnote{
+  font-family:var(--f-mono);font-size:11px;line-height:1.6;color:var(--on-dark-faint);
+  border-left:2px solid var(--line-dark);padding-left:14px;max-width:70ch;
+}
+.band-light .footnote{color:var(--on-light-mute);border-color:var(--line-light)}
+
+footer{background:var(--ink);color:var(--on-dark-mute);padding-block:44px;font-size:13px}
+.foot-row{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.foot-brand{display:flex;align-items:center;gap:10px;color:var(--on-dark)}
+.foot-brand b{font-family:var(--f-display);font-size:18px;font-weight:600;letter-spacing:-.02em}
+
+/* ---------- révélation au défilement ---------- */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.3,1)}
+.rv.in{opacity:1;transform:none}
+.rv-1{transition-delay:.07s}.rv-2{transition-delay:.14s}.rv-3{transition-delay:.21s}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-stage{min-height:auto;padding-top:14px}
+  .product-grid{grid-template-columns:1fr}
+  .phone-col{position:static;order:-1}
+  .split,.cols-3,.cols-2{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .rm-row{grid-template-columns:1fr;gap:6px}
+}
+@media (max-width:420px){
+  .wrap,.wrap-narrow{padding-inline:18px}
+  .phone{width:100%;padding:8px;border-radius:38px}
+  .screen{height:640px;border-radius:31px}
+  .step-row{grid-template-columns:1fr;gap:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+
+<!-- ======================= HÉRO ======================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Projet — marketplace immobilière entre particuliers</p>
+      <h1>Vendre son bien ne devrait pas coûter <em>le prix d'une voiture.</em></h1>
+      <p class="lede">AGENCIMMO met le vendeur et l'acheteur en relation directe, avec la légèreté de Vinted et la confiance de TripAdvisor&nbsp;: profils vérifiés, avis publics, accompagnement à la carte. La commission d'agence devient un choix, plus une fatalité.</p>
+      <div class="hero-stats">
+        <span class="chip-stat"><b>10 800 €</b><span>commission d'agence moyenne</span></span>
+        <span class="chip-stat"><b>0 €</b><span>pour déposer une annonce</span></span>
+        <span class="chip-stat"><b>990 €</b><span>notre plafond, à la signature</span></span>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-brass" href="#produit">
+          Voir le produit
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#projet">Le projet en 4 minutes</a>
+      </div>
+      <p class="hero-note">Prototype cliquable — les écrans ci-dessous fonctionnent vraiment.</p>
+    </div>
+
+    <div class="hero-stage">
+      <div class="hero-glow"></div>
+      <div id="heroCollage" style="position:relative;width:100%;max-width:430px;padding-block:20px 40px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PRODUIT ======================= -->
+<section class="band-dark pad" id="produit">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow">Le produit</p>
+      <h2>Une app qu'on prend en main sans mode d'emploi.</h2>
+      <p class="lede">Cinq écrans, aucun jargon. Touchez le téléphone&nbsp;: tout est cliquable, y compris le dépôt d'annonce — allez au bout, votre bien apparaîtra vraiment dans le fil.</p>
+    </div>
+
+    <div class="product-grid">
+      <div>
+        <div class="feature-list" id="featureList">
+          <button class="feature on" data-goto="feed">
+            <span class="feature-idx">FIL</span>
+            <span class="feature-txt"><b>Un fil, pas un moteur de recherche</b><p>On ouvre l'app et on voit des biens, tout de suite. Les filtres sont là si on les cherche — jamais devant la porte.</p></span>
+          </button>
+          <button class="feature" data-goto="detail">
+            <span class="feature-idx">FICHE</span>
+            <span class="feature-txt"><b>La fiche dit tout, y compris qui vend</b><p>Prix, surface, DPE, économie réalisée — et le vendeur avec sa note, ses avis et son délai de réponse. La confiance se lit en trois secondes.</p></span>
+          </button>
+          <button class="feature" data-goto="publish">
+            <span class="feature-idx">DÉPÔT</span>
+            <span class="feature-txt"><b>Déposer en trois minutes, gratuitement</b><p>Photos, quelques champs, et une estimation automatique qui propose un prix cohérent avec le quartier. Essayez&nbsp;: le formulaire marche pour de vrai.</p></span>
+          </button>
+          <button class="feature" data-goto="chat">
+            <span class="feature-idx">CHAT</span>
+            <span class="feature-txt"><b>La visite se cale dans la conversation</b><p>Pas de formulaire de contact qui part dans le vide. On discute, on propose un créneau, on confirme. Comme sur Vinted.</p></span>
+          </button>
+          <button class="feature" data-goto="profile">
+            <span class="feature-idx">SUIVI</span>
+            <span class="feature-txt"><b>Le vendeur voit ce qu'il économise</b><p>Vues, favoris, demandes de visite — et le montant qu'il n'a pas versé à une agence. C'est ce chiffre qui le fait rester.</p></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="phone-col">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar">
+              <span id="clock">9:41</span>
+              <span class="sb-icons" aria-hidden="true">
+                <i class="sb-bar" style="height:5px"></i><i class="sb-bar" style="height:7px"></i><i class="sb-bar" style="height:9px"></i><i class="sb-bar" style="height:11px"></i>
+                <svg width="15" height="11" viewBox="0 0 26 13" style="margin-left:4px"><rect x=".6" y=".6" width="21" height="11.8" rx="3.4" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2.4" y="2.4" width="16" height="8.2" rx="2" fill="currentColor"/><path d="M23.4 4.4v4.2a2.6 2.6 0 0 0 0-4.2z" fill="currentColor" fill-opacity=".45"/></svg>
+              </span>
+            </div>
+            <div class="views" id="views"></div>
+            <nav class="tabbar" id="tabbar"></nav>
+            <div class="toast" id="toast"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span id="toastMsg"></span></div>
+          </div>
+        </div>
+        <p class="phone-hint">
+          <svg viewBox="0 0 24 24"><path d="M9 11V6a2 2 0 1 1 4 0v5m0-2a2 2 0 1 1 4 0v2m0-1a2 2 0 1 1 4 0v6a6 6 0 0 1-6 6h-2a7 7 0 0 1-7-7v-1a2 2 0 1 1 4 0"/></svg>
+          Prototype interactif — cliquez
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PROBLÈME ======================= -->
+<section class="band-light pad" id="projet">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow on-light">Le problème</p>
+      <h2>On paie 10 000 € pour un service qu'on ne choisit pas.</h2>
+      <p class="lede">Une agence facture un pourcentage du prix du bien. Vendre un appartement à 400 000 € ne demande pourtant pas deux fois plus de travail qu'à 200 000 €. Le vendeur paie une proportion, pas une prestation.</p>
+    </div>
+    <div class="compare rv rv-1">
+      <div>
+        <h4>Aujourd'hui — via une agence</h4>
+        <p class="big" style="color:var(--rust)">10 800 €</p>
+        <ul>
+          <li>Mandat exclusif de 3 mois, souvent tacitement reconduit</li>
+          <li>Le vendeur ne sait pas combien de visites ont vraiment eu lieu</li>
+          <li>L'acheteur paie la commission dans le prix, sans jamais l'avoir négociée</li>
+          <li>Zéro avis public sur l'agent : sa réputation n'est nulle part</li>
+        </ul>
+      </div>
+      <div class="us">
+        <h4>Avec AGENCIMMO</h4>
+        <p class="big" style="color:var(--brass-bright)">0 à 990 €</p>
+        <ul>
+          <li>Dépôt gratuit, sans mandat, sans engagement de durée</li>
+          <li>Vues, favoris et demandes de visite visibles en direct</li>
+          <li>Services à la carte : photos, diagnostics, accompagnement juridique</li>
+          <li>Vendeurs et acheteurs notés publiquement, comme sur TripAdvisor</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FONCTIONNEMENT ======================= -->
+<section class="band-light pad-s">
+  <div class="wrap-narrow">
+    <div class="sec-head rv">
+      <p class="eyebrow on-light">Le parcours vendeur</p>
+      <h2>Trois étapes, dans cet ordre.</h2>
+    </div>
+    <div class="steps-list">
+      <div class="step-row rv"><div class="step-n">01</div><div class="step-c"><h3>Il dépose son bien en trois minutes</h3><p>Photos depuis le téléphone, adresse, surface, nombre de pièces. L'estimation automatique propose une fourchette à partir des ventes récentes du secteur — le vendeur garde la main sur son prix, mais il n'est plus seul face à la page blanche.</p></div></div>
+      <div class="step-row rv"><div class="step-n">02</div><div class="step-c"><h3>Les acheteurs le contactent directement</h3><p>Aucun intermédiaire dans la conversation. L'acheteur pose ses questions, demande un créneau, la visite se cale dans le chat. Le vendeur voit qui a regardé, qui a mis en favori, qui est revenu trois fois.</p></div></div>
+      <div class="step-row rv"><div class="step-n">03</div><div class="step-c"><h3>Il ne paie qu'à la signature du compromis</h3><p>990 € plafonnés, quel que soit le prix du bien. S'il a besoin d'un diagnostic, d'un photographe ou d'un juriste, il les prend à la carte au moment où il en a besoin. S'il n'a besoin de rien, il ne paie rien de plus.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CONFIANCE ======================= -->
+<section class="band-dark pad">
+  <div class="wrap">
+    <div class="split">
+      <div class="sec-head rv" style="margin-bottom:0">
+        <p class="eyebrow">Notre différence</p>
+        <h2>Le particulier à particulier existe déjà. Ce qui manque, c'est la confiance.</h2>
+        <p class="lede">Sur les sites d'annonces actuels, on ne sait rien du vendeur d'en face. C'est exactement le problème que TripAdvisor a résolu pour les restaurants et Airbnb pour les logements : rendre la réputation visible, publique et cumulative.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel rv rv-1">
+          <h3>Identité vérifiée</h3>
+          <p>Pièce d'identité et titre de propriété contrôlés avant publication. Un badge que l'acheteur voit avant même d'ouvrir la fiche — et qui élimine les annonces fantômes.</p>
+        </div>
+        <div class="panel rv rv-2">
+          <h3>Avis publics des deux côtés</h3>
+          <p>L'acheteur note le vendeur sur la fiabilité de l'annonce et la qualité de la visite. Le vendeur note l'acheteur sur son sérieux. Les deux réputations se construisent, et se perdent.</p>
+        </div>
+        <div class="panel rv rv-3">
+          <h3>Délai de réponse affiché</h3>
+          <p>« Répond en 1 h » n'est pas un argument marketing, c'est une mesure. Elle pousse mécaniquement les vendeurs à répondre — et c'est là que se joue la conversion.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= MODÈLE ======================= -->
+<section class="band-light pad">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow on-light">Le modèle économique</p>
+      <h2>Gratuit pour entrer, payant pour aller plus vite.</h2>
+      <p class="lede">Le dépôt reste gratuit pour toujours : c'est ce qui remplit le catalogue, et le catalogue est ce qui attire les acheteurs. On monétise le confort et la réussite, pas l'accès.</p>
+    </div>
+    <div class="cols-3">
+      <div class="panel rv"><span class="price-tag">Gratuit</span><h3>Déposer et discuter</h3><p>Annonce illimitée, photos, messagerie, demandes de visite. Aucune carte bancaire demandée.</p></div>
+      <div class="panel rv rv-1"><span class="price-tag">39 € — 249 €</span><h3>Options à la carte</h3><p>Mise en avant dans le fil, reportage photo par un professionnel local, pack diagnostics, visite virtuelle. Le vendeur prend ce dont il a besoin.</p></div>
+      <div class="panel rv rv-2"><span class="price-tag">990 € plafonnés</span><h3>Commission de réussite</h3><p>Facturée uniquement à la signature du compromis. Le vendeur d'un bien à 500 000 € paie le même prix que celui d'un studio à 90 000 €.</p></div>
+    </div>
+    <div style="margin-top:26px" class="cols-2">
+      <div class="panel rv"><h3>Et derrière : les partenaires</h3><p>Courtage en crédit, assurance emprunteur, déménagement, travaux. L'apport d'affaires sur un acheteur qualifié se rémunère mieux qu'une annonce mise en avant — et c'est là que se trouve la marge à l'échelle.</p></div>
+      <div class="panel rv rv-1"><h3>Ce qu'on ne fera pas</h3><p>Pas de vente de leads aux agences : ce serait recréer l'intermédiaire qu'on retire. Pas de publicité dans le fil non plus — la lisibilité du catalogue est notre seul actif.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= MARCHÉ ======================= -->
+<section class="band-deep pad">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow">Le marché</p>
+      <h2>Un gisement de commissions de plusieurs milliards, en France seulement.</h2>
+    </div>
+    <div class="cols-3" style="margin-bottom:34px">
+      <div class="figure-block rv"><b>≈ 780 000</b><span>ventes de logements anciens par an en France</span></div>
+      <div class="figure-block rv rv-1"><b>≈ 6 Md€</b><span>de commissions d'agence versées chaque année</span></div>
+      <div class="figure-block rv rv-2"><b>≈ 1 sur 3</b><span>des ventes se fait déjà de particulier à particulier, sans outil dédié</span></div>
+    </div>
+    <p class="footnote rv">Ordres de grandeur issus des publications publiques du secteur (notaires, INSEE) et à re-sourcer précisément avant toute présentation à un investisseur. Ils servent ici à dimensionner l'opportunité, pas à la prouver.</p>
+
+    <hr class="rule" style="margin-block:clamp(46px,6vw,74px)">
+
+    <div class="sec-head rv"><p class="eyebrow">La trajectoire</p><h2>Un département d'abord. Pas la France entière.</h2>
+    <p class="lede">Une marketplace se gagne localement : il faut assez d'annonces dans une même ville pour qu'un acheteur ait une raison de revenir. On sature un territoire, puis on duplique.</p></div>
+    <div class="roadmap">
+      <div class="rm-row rv"><div class="rm-when">Mois 1 — 4</div><div class="rm-what"><b>MVP et 200 premières annonces</b><p>App iOS et Android, dépôt, fil, messagerie, vérification d'identité. Recrutement des annonces à la main, une par une, sur une seule agglomération.</p></div></div>
+      <div class="rm-row rv"><div class="rm-when">Mois 5 — 10</div><div class="rm-what"><b>Réputation et premières ventes conclues</b><p>Avis publics, estimation automatique, réseau de photographes et diagnostiqueurs partenaires. Objectif : les dix premiers compromis signés via la plateforme.</p></div></div>
+      <div class="rm-row rv"><div class="rm-when">Mois 11 — 18</div><div class="rm-what"><b>Duplication régionale</b><p>Trois nouvelles agglomérations avec le même manuel d'ouverture. Mise en place des partenariats courtage et assurance, qui deviennent la deuxième source de revenus.</p></div></div>
+      <div class="rm-row rv"><div class="rm-when">Après</div><div class="rm-what"><b>Le réflexe national</b><p>Devenir l'endroit où l'on regarde en premier quand on cherche un bien — et où l'on dépose sans se demander s'il faut passer par une agence.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= REJOINDRE ======================= -->
+<section class="band-dark pad">
+  <div class="wrap-narrow" style="text-align:left">
+    <div class="sec-head rv">
+      <p class="eyebrow">Ce qu'on cherche</p>
+      <h2>Un associé, pas un prestataire.</h2>
+      <p class="lede">Le prototype que tu viens de manipuler a été construit pour montrer une direction, pas pour être vendu. Ce qui manque maintenant, c'est quelqu'un qui prenne une moitié du problème.</p>
+    </div>
+    <div class="ask-list rv rv-1">
+      <p class="ask"><span class="ask-mark"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Un profil produit et technique</b> pour transformer ces écrans en vraie app mobile, avec la messagerie et la vérification d'identité.</span></p>
+      <p class="ask"><span class="ask-mark"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Quelqu'un qui connaît le terrain</b> — un notaire, un diagnostiqueur, un ancien agent immobilier. Le premier territoire se gagne avec des relations, pas avec de la publicité.</span></p>
+      <p class="ask"><span class="ask-mark"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Six mois de conviction</b> avant de parler à un investisseur. Deux cents annonces réelles valent tous les tableurs du monde.</span></p>
+    </div>
+    <div class="hero-cta rv rv-2" style="margin-top:34px">
+      <a class="btn btn-brass" href="#produit">Revoir le prototype</a>
+      <a class="btn btn-ghost" href="mailto:">En parler de vive voix</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <span class="foot-brand"><span id="footKey"></span><b>AGENCIMMO</b></span>
+    <span>Prototype de démonstration — données et biens fictifs, aucun engagement.</span>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* ============================================================
+   1. ILLUSTRATIONS — façades dessinées en SVG.
+   Aucune image externe : chaque bien a son élévation, dans une
+   palette cohérente avec l'identité (pin, laiton, craie).
+   ============================================================ */
+let uid = 0;
+const P = {
+  skyA:["#DEE7DD","#E6E3D6","#DCE4E4","#EAE3D4"],
+  skyB:["#F4F1E7","#F6F0E2","#F1F2EC","#F7F1E4"],
+  wall:["#EDE6D8","#E3D9C7","#F1ECE3","#DED3C0","#E8DFCE"],
+  roof:["#8C5E46","#6E4A3A","#3E4B45","#7A5340","#4A4740"],
+  glass:"#16352A", lit:"#E3B95F", sill:"#CFC4B0",
+  tree:"#2C5A45", tree2:"#3C7057", trunk:"#6B5237",
+  ground:"#DCE3D5", ground2:"#CBD5C4"
+};
+const pick = (arr,s)=>arr[Math.abs(s)%arr.length];
+
+function shell(inner,id,sA,sB){
+  return `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration du bien">
+  <defs>
+    <linearGradient id="sky${id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${sA}"/><stop offset="1" stop-color="${sB}"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#sky${id})"/>
+  ${inner}</svg>`;
+}
+function tree(x,y,s,c){
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+    <rect x="-3" y="-26" width="6" height="30" rx="2" fill="${P.trunk}"/>
+    <circle cx="0" cy="-40" r="24" fill="${c}"/>
+    <circle cx="-15" cy="-28" r="16" fill="${c}" opacity=".85"/>
+    <circle cx="15" cy="-30" r="14" fill="${c}" opacity=".9"/></g>`;
+}
+function win(x,y,w,h,lit,shutters){
+  let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" fill="${lit?P.lit:P.glass}"/>
+  <path d="M${x+w/2} ${y}V${y+h}M${x} ${y+h/2}H${x+w}" stroke="${lit?"#B98B34":"#0B1913"}" stroke-width="1.4" opacity=".55"/>
+  <rect x="${x-2}" y="${y+h}" width="${w+4}" height="3" fill="${P.sill}"/>`;
+  if(shutters) s += `<rect x="${x-7}" y="${y}" width="6" height="${h}" rx="1" fill="${P.tree}" opacity=".82"/>
+  <rect x="${x+w+1}" y="${y}" width="6" height="${h}" rx="1" fill="${P.tree}" opacity=".82"/>`;
+  return s;
+}
+
+const KINDS = {
+  village(id,s){
+    const w=pick(P.wall,s), r=pick(P.roof,s+1);
+    return `<rect y="215" width="400" height="85" fill="${P.ground}"/>
+    ${tree(52,232,1.15,P.tree)}
+    <rect x="104" y="112" width="200" height="108" fill="${w}"/>
+    <path d="M92 116 204 44l112 72z" fill="${r}"/>
+    <rect x="92" y="112" width="224" height="8" fill="${r}" opacity=".8"/>
+    <rect x="252" y="52" width="17" height="34" fill="${r}"/>
+    ${win(134,134,30,36,false,true)}${win(244,134,30,36,true,true)}
+    <rect x="186" y="158" width="36" height="62" rx="2" fill="${P.tree}"/>
+    <circle cx="214" cy="190" r="2.4" fill="${P.lit}"/>
+    <rect x="180" y="216" width="48" height="5" fill="${P.ground2}"/>
+    ${tree(348,236,.95,P.tree2)}
+    <path d="M0 258h400" stroke="${P.ground2}" stroke-width="10" opacity=".7"/>`;
+  },
+  haussmann(id,s){
+    const w=pick(P.wall,s+2);
+    let rows="";
+    for(let r=0;r<3;r++) for(let c=0;c<4;c++){
+      const x=68+c*72, y=76+r*66, lit=(r*4+c+s)%5===0;
+      rows += win(x,y,34,44,lit,false);
+      rows += `<rect x="${x-8}" y="${y+44}" width="50" height="4" fill="${P.sill}"/>
+      <g stroke="${P.roof[2]}" stroke-width="1.6" opacity=".65">
+        ${[0,1,2,3,4,5,6].map(i=>`<path d="M${x-6+i*8} ${y+34}v14"/>`).join("")}
+        <path d="M${x-7} ${y+34}h48"/></g>`;
+    }
+    return `<rect y="272" width="400" height="28" fill="${P.ground}"/>
+    <rect x="46" y="52" width="308" height="222" fill="${w}"/>
+    <rect x="38" y="44" width="324" height="14" rx="2" fill="${P.sill}"/>
+    <path d="M38 44 60 18h280l22 26z" fill="${pick(P.roof,s+4)}"/>
+    ${rows}
+    <rect x="176" y="212" width="48" height="62" rx="3" fill="${P.tree}"/>
+    <rect x="182" y="218" width="36" height="26" rx="2" fill="${P.glass}"/>
+    <circle cx="212" cy="252" r="2.6" fill="${P.lit}"/>
+    ${tree(28,278,.8,P.tree2)}${tree(378,280,.75,P.tree)}`;
+  },
+  loft(id,s){
+    const w="#C9B7A4";
+    let g="";
+    for(let c=0;c<3;c++){
+      const x=88+c*98;
+      g += `<rect x="${x}" y="112" width="72" height="86" fill="${(c+s)%3===0?P.lit:P.glass}" opacity="${(c+s)%3===0?.92:1}"/>`;
+      g += `<g stroke="${w}" stroke-width="3">${[1,2].map(i=>`<path d="M${x+i*24} 112v86"/>`).join("")}<path d="M${x} 141h72M${x} 170h72"/></g>`;
+    }
+    return `<rect y="198" width="400" height="102" fill="${P.ground}"/>
+    <rect x="64" y="96" width="292" height="104" fill="${w}"/>
+    <path d="M64 96l38-42 38 42M140 96l38-42 38 42M216 96l38-42 38 42M292 96l38-42 26 30v12z" fill="${pick(P.roof,s+2)}"/>
+    ${g}
+    <rect x="64" y="196" width="292" height="6" fill="${P.roof[4]}" opacity=".5"/>
+    ${tree(32,224,1,P.tree)}
+    <path d="M0 246h400" stroke="${P.ground2}" stroke-width="12" opacity=".65"/>`;
+  },
+  villa(id,s){
+    return `<rect y="196" width="400" height="104" fill="${P.ground}"/>
+    <rect x="70" y="104" width="240" height="94" fill="${pick(P.wall,s)}"/>
+    <rect x="58" y="94" width="264" height="12" rx="2" fill="#F4F1E9"/>
+    <rect x="96" y="122" width="118" height="76" fill="${P.glass}"/>
+    <path d="M155 122v76" stroke="#F4F1E9" stroke-width="3"/>
+    ${win(240,126,42,40,true,false)}
+    <rect x="70" y="196" width="240" height="5" fill="${P.ground2}"/>
+    <rect x="106" y="228" width="196" height="46" rx="23" fill="#8FB9C4"/>
+    <rect x="118" y="238" width="172" height="26" rx="13" fill="#A6CCD4" opacity=".8"/>
+    ${tree(48,214,1.05,P.tree2)}${tree(352,218,.9,P.tree)}
+    <rect x="322" y="150" width="7" height="52" rx="3" fill="${P.trunk}"/>
+    <path d="M325 152c-16-10-26-4-30 6 12-6 20-4 26 2zM326 152c16-10 26-4 30 6-12-6-20-4-26 2z" fill="${P.tree2}"/>`;
+  },
+  ferme(id,s){
+    const w=pick(P.wall,s+3), r=pick(P.roof,s);
+    return `<rect y="206" width="400" height="94" fill="${P.ground}"/>
+    <rect x="52" y="140" width="296" height="68" fill="${w}"/>
+    <path d="M40 144 200 82l160 62z" fill="${r}"/>
+    ${win(84,156,26,30,false,true)}${win(150,156,26,30,true,true)}${win(276,156,26,30,false,true)}
+    <path d="M198 208v-46a20 20 0 0 1 40 0v46z" fill="${P.tree}"/>
+    <rect x="84" y="98" width="14" height="30" fill="${r}"/>
+    ${tree(28,226,1.2,P.tree2)}${tree(370,232,1,P.tree)}
+    <g stroke="${P.ground2}" stroke-width="7" opacity=".7"><path d="M0 234h400M0 258h400M0 282h400"/></g>`;
+  },
+  appart(id,s){
+    let b="";
+    for(let r=0;r<4;r++) for(let c=0;c<3;c++){
+      const x=104+c*68, y=64+r*50, lit=(r+c+s)%4===0;
+      b += `<rect x="${x}" y="${y}" width="46" height="30" fill="${lit?P.lit:P.glass}"/>
+      <rect x="${x-6}" y="${y+30}" width="58" height="9" rx="2" fill="#F1EDE4"/>
+      <rect x="${x-6}" y="${y+30}" width="58" height="9" rx="2" fill="none" stroke="${P.sill}"/>`;
+      if((r+c)%3===0) b += `<circle cx="${x+40}" cy="${y+27}" r="6" fill="${P.tree2}"/>`;
+    }
+    return `<rect y="270" width="400" height="30" fill="${P.ground}"/>
+    <rect x="88" y="46" width="226" height="226" fill="${pick(P.wall,s+1)}"/>
+    <rect x="80" y="38" width="242" height="12" rx="2" fill="#F4F1E9"/>
+    ${b}
+    <rect x="176" y="222" width="52" height="50" rx="3" fill="${P.glass}"/>
+    ${tree(46,282,.9,P.tree)}${tree(360,284,.85,P.tree2)}`;
+  }
+};
+const KIND_KEYS = Object.keys(KINDS);
+function illus(kind,seed){
+  const id = ++uid;
+  const k = KINDS[kind] ? kind : KIND_KEYS[Math.abs(seed)%KIND_KEYS.length];
+  const s = Math.abs(seed|0);
+  return shell(KINDS[k](id,s), id, pick(P.skyA,s), pick(P.skyB,s+1));
+}
+
+/* ============================================================
+   2. DONNÉES
+   ============================================================ */
+const TYPES = [
+  {id:"village",  label:"Maison de village"},
+  {id:"haussmann",label:"Appartement ancien"},
+  {id:"loft",     label:"Loft / atelier"},
+  {id:"villa",    label:"Villa contemporaine"},
+  {id:"ferme",    label:"Mas / longère"},
+  {id:"appart",   label:"Appartement récent"}
+];
+const PRIX_M2 = {
+  "uzès":3100,"uzes":3100,"nîmes":2200,"nimes":2200,"montpellier":3900,"avignon":2600,
+  "sète":4100,"sete":4100,"arles":2400,"alès":1700,"ales":1700,"aix-en-provence":5200,
+  "marseille":3400,"perpignan":1900,"lyon":4600,"bordeaux":4400,"nantes":3600,
+  "toulouse":3500,"paris":9800,"lille":3300,"rennes":3800,"strasbourg":3400
+};
+const VILLES = ["Uzès","Nîmes","Montpellier","Avignon","Sète","Arles","Alès","Aix-en-Provence","Marseille","Perpignan","Lyon","Bordeaux","Nantes","Toulouse","Paris","Lille","Rennes","Strasbourg"];
+const DPE_C = {A:"#128A5A",B:"#4E9B3F",C:"#8CA82E",D:"#C9A227",E:"#D07C24",F:"#C4553D",G:"#A33227"};
+
+const SEED = [
+  {id:"s1",kind:"village",titre:"Maison de village rénovée avec terrasse",ville:"Uzès",quartier:"Centre historique",prix:389000,m2:142,pieces:5,ch:3,dpe:"C",
+   desc:"Une maison en pierre entièrement reprise en 2021 : poutres apparentes, sol en tomettes d'origine, cuisine ouverte sur une terrasse de 30 m² orientée sud. À quatre minutes à pied de la place aux Herbes.",
+   vendeur:{nom:"Camille R.",note:4.9,avis:12,delai:"répond en ~1 h"},vues:1284,favs:96,visites:8},
+  {id:"s2",kind:"haussmann",titre:"Trois pièces avec balcon filant, étage élevé",ville:"Montpellier",quartier:"Boutonnet",prix:296000,m2:74,pieces:3,ch:2,dpe:"D",
+   desc:"Quatrième étage avec ascenseur, parquet point de Hongrie, moulures et cheminée conservées. Balcon sur rue calme, cave et local vélo. Copropriété de douze lots, sans procédure en cours.",
+   vendeur:{nom:"Idriss M.",note:4.7,avis:8,delai:"répond en ~3 h"},vues:2107,favs:184,visites:14},
+  {id:"s3",kind:"villa",titre:"Villa d'architecte, piscine et oliviers",ville:"Aix-en-Provence",quartier:"Puyricard",prix:845000,m2:198,pieces:6,ch:4,dpe:"B",
+   desc:"Construction de 2019 sur un terrain de 1 400 m². Grande baie coulissante plein sud, piscine chauffée au sel, garage double. Panneaux photovoltaïques posés en 2023, facture d'électricité quasi nulle.",
+   vendeur:{nom:"Hélène et Marc",note:5.0,avis:5,delai:"répond en ~30 min"},vues:3418,favs:412,visites:21},
+  {id:"s4",kind:"loft",titre:"Ancien atelier de menuiserie transformé en loft",ville:"Marseille",quartier:"La Belle de Mai",prix:342000,m2:118,pieces:3,ch:2,dpe:"D",
+   desc:"Volume de 4,20 m sous plafond, verrière d'atelier conservée, mezzanine en acier brut. Deux chambres closes, une salle d'eau refaite. Idéal pour un usage mixte habitation et bureau.",
+   vendeur:{nom:"Sofia B.",note:4.8,avis:17,delai:"répond en ~2 h"},vues:1876,favs:231,visites:11},
+  {id:"s5",kind:"ferme",titre:"Mas provençal sur 8 000 m², dépendances",ville:"Arles",quartier:"Route de Fontvieille",prix:615000,m2:265,pieces:8,ch:5,dpe:"E",
+   desc:"Mas du XVIIIᵉ dans son jus mais sain : toiture refaite en 2018, réseaux à reprendre. Deux dépendances de 40 m² à réhabiliter, forage et puits. Le genre de bien qui demande un projet.",
+   vendeur:{nom:"Bernard T.",note:4.6,avis:9,delai:"répond en ~5 h"},vues:942,favs:88,visites:6},
+  {id:"s6",kind:"appart",titre:"Deux pièces neuf avec loggia, dernier étage",ville:"Nîmes",quartier:"Jean Jaurès",prix:178000,m2:48,pieces:2,ch:1,dpe:"A",
+   desc:"Livré en 2023, jamais habité. Loggia de 9 m² sans vis-à-vis, place de parking en sous-sol incluse. Chauffage collectif performant, charges de 62 € par mois.",
+   vendeur:{nom:"Léa P.",note:4.9,avis:6,delai:"répond en ~1 h"},vues:1533,favs:147,visites:9}
+];
+
+/* ============================================================
+   3. ÉTAT
+   ============================================================ */
+const STORE = "agencimmo.demo.v1";
+const state = {
+  tab:"feed", current:null, filter:"tous",
+  favs:new Set(), mine:[], step:0, chatOpen:null, myThread:null,
+  draft:blankDraft()
+};
+function blankDraft(){
+  return {kind:"village",titre:"",ville:"",quartier:"",prix:"",m2:"",pieces:3,ch:2,dpe:"C",desc:"",photos:[]};
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    if(Array.isArray(d.mine)) state.mine = d.mine;
+    if(Array.isArray(d.favs)) state.favs = new Set(d.favs);
+  }catch(e){/* stockage indisponible : la démo tourne sans mémoire */}
+}
+function save(){
+  try{
+    localStorage.setItem(STORE, JSON.stringify({mine:state.mine, favs:[...state.favs]}));
+  }catch(e){/* quota ou navigation privée : on ignore */}
+}
+const listings = ()=>[...state.mine, ...SEED];
+const byId = id=>listings().find(l=>l.id===id);
+
+/* ---------- formatage ---------- */
+const eur = n=>new Intl.NumberFormat("fr-FR",{maximumFractionDigits:0}).format(Math.round(n))+"\u00a0€";
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const eco = prix=>Math.max(0, Math.round(prix*0.045 - 990));
+function initiales(nom){
+  return nom.trim().split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase()||"?";
+}
+function teinte(seed){
+  const tons=["#0E5C43","#B8873B","#3E6B57","#8E6D31","#245C4C"];
+  return tons[Math.abs(hash(seed))%tons.length];
+}
+function hash(s){let h=0;for(let i=0;i<String(s).length;i++)h=(h*31+String(s).charCodeAt(i))|0;return h}
+function media(l){
+  const p = l.photos && l.photos[0];
+  if(!p) return illus(l.kind, hash(l.id));
+  return p.startsWith("data:") ? `<img src="${p}" alt="Photo du bien">` : p;
+}
+
+/* ============================================================
+   4. ICÔNES
+   ============================================================ */
+const I = {
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  heart:'<path d="M12 20.5S3.5 15 3.5 9.2A4.7 4.7 0 0 1 12 6.6a4.7 4.7 0 0 1 8.5 2.6C20.5 15 12 20.5 12 20.5z"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  chat:'<path d="M21 11.5a8 8 0 0 1-11.6 7.1L3 20.5l1.9-6.3A8 8 0 1 1 21 11.5z"/>',
+  user:'<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0"/>',
+  search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+  bell:'<path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10.5 20a2 2 0 0 0 3 0"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  send:'<path d="M21 3 10.5 13.5M21 3l-6.8 18-3.7-7.5L3 10z"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  camera:'<path d="M4 8.5h3l1.5-2.5h7L17 8.5h3a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5z"/><circle cx="12" cy="13.5" r="3.5"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
+  eye:'<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/>',
+  box:'<path d="M3.5 8.5 12 4l8.5 4.5v7L12 20l-8.5-4.5z"/><path d="M3.5 8.5 12 13l8.5-4.5M12 13v7"/>'
+};
+const svg = (p,cls="")=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
+
+/* ============================================================
+   5. RENDU DES ÉCRANS
+   ============================================================ */
+const views = document.getElementById("views");
+const tabbar = document.getElementById("tabbar");
+
+const TABS = [
+  {id:"feed",  label:"Explorer", icon:I.home},
+  {id:"favs",  label:"Favoris",  icon:I.heart},
+  {id:"publish",label:"Déposer", icon:I.plus, fab:true},
+  {id:"chat",  label:"Messages", icon:I.chat},
+  {id:"profile",label:"Profil",  icon:I.user}
+];
+
+function renderTabs(){
+  const active = state.tab==="detail" ? "feed" : state.tab;
+  tabbar.innerHTML = TABS.map(t=>{
+    if(t.fab) return `<button class="tab tab-fab" data-tab="${t.id}" aria-label="Déposer une annonce"><span class="fab">${svg(t.icon)}</span></button>`;
+    return `<button class="tab ${active===t.id?"on":""}" data-tab="${t.id}">${svg(t.icon)}<span>${t.label}</span></button>`;
+  }).join("");
+}
+
+function cardHTML(l){
+  const fav = state.favs.has(l.id);
+  const mine = l.mine;
+  return `<button class="card" data-open="${l.id}">
+    <span class="card-media">
+      ${media(l)}
+      <span class="card-tags">
+        ${mine?'<span class="tag mine">Votre annonce</span>':""}
+        ${l.neuf&&!mine?'<span class="tag new">Nouveau</span>':""}
+        <span class="tag">Particulier</span>
+      </span>
+      <span class="heart ${fav?"on":""}" data-fav="${l.id}" role="button" aria-label="Ajouter aux favoris">${svg(I.heart)}</span>
+    </span>
+    <span class="card-body">
+      <span class="card-price"><b>${eur(l.prix)}</b><i>${Math.round(l.prix/l.m2).toLocaleString("fr-FR")} €/m²</i></span>
+      <span class="card-title">${esc(l.titre)}</span>
+      <span class="card-meta">
+        <span>${esc(l.ville)}</span><i class="sep"></i>
+        <span>${l.m2} m²</span><i class="sep"></i>
+        <span>${l.pieces} pièces</span><i class="sep"></i>
+        <span class="dpe" style="background:${DPE_C[l.dpe]||"#8CA82E"}">${l.dpe}</span>
+      </span>
+      <span class="saving">Vous économisez ${eur(eco(l.prix))} de commission</span>
+    </span>
+  </button>`;
+}
+
+function viewFeed(){
+  const all = listings();
+  const shown = state.filter==="tous" ? all : all.filter(l=>l.kind===state.filter);
+  const chips = [{id:"tous",label:"Tous les biens"}].concat(TYPES.map(t=>({id:t.id,label:t.label})));
+  return `<div class="view-pad">
+    <div class="app-head">
+      <div class="brandline">
+        <span class="brandmark">${keySVG(24)}<b>AGENCIMMO</b></span>
+        <button class="icon-btn dot-badge" aria-label="Notifications">${svg(I.bell)}</button>
+      </div>
+      <label class="searchbar">${svg(I.search)}<input type="text" data-search placeholder="Uzès, Montpellier, un mas…" aria-label="Rechercher un bien"></label>
+    </div>
+    <div class="chips">${chips.map(c=>`<button class="chip ${state.filter===c.id?"on":""}" data-filter="${c.id}">${c.label}</button>`).join("")}</div>
+    <div class="sec-label"><b>${shown.length} bien${shown.length>1?"s":""} près de vous</b><span>TRIÉS PAR PERTINENCE</span></div>
+    ${shown.length ? `<div class="cards">${shown.map(cardHTML).join("")}</div>`
+      : `<div class="empty">${svg(I.box)}<b>Rien dans cette catégorie</b><p>Changez de filtre, ou déposez le premier bien du secteur.</p></div>`}
+  </div>`;
+}
+
+function viewFavs(){
+  const f = listings().filter(l=>state.favs.has(l.id));
+  return `<div class="view-pad">
+    <div class="app-head"><div class="brandline"><span class="brandmark"><b>Favoris</b></span></div></div>
+    ${f.length ? `<div class="cards">${f.map(cardHTML).join("")}</div>`
+      : `<div class="empty">${svg(I.heart)}<b>Aucun favori pour l'instant</b><p>Touchez le cœur sur une annonce pour la retrouver ici et suivre ses changements de prix.</p></div>`}
+  </div>`;
+}
+
+function viewDetail(){
+  const l = byId(state.current) || listings()[0];
+  if(!l) return `<div class="empty">${svg(I.box)}<b>Annonce introuvable</b></div>`;
+  const fav = state.favs.has(l.id);
+  const v = l.vendeur;
+  return `<div class="view-pad">
+    <div class="detail-hero">
+      ${media(l)}
+      <button class="detail-back" data-back aria-label="Retour">${svg(I.back)}</button>
+      <span class="heart ${fav?"on":""}" data-fav="${l.id}" role="button" aria-label="Favori">${svg(I.heart)}</span>
+      <span class="dots"><i class="on"></i><i></i><i></i><i></i></span>
+    </div>
+    <div class="detail-body">
+      <div class="detail-price">
+        <div><b>${eur(l.prix)}</b><small>${Math.round(l.prix/l.m2).toLocaleString("fr-FR")} €/m² · ${esc(l.quartier||l.ville)}</small></div>
+        <span class="dpe" style="background:${DPE_C[l.dpe]||"#8CA82E"};width:26px;height:26px;font-size:12px">${l.dpe}</span>
+      </div>
+      <h3 style="font-size:16px;line-height:1.3;font-family:var(--f-display);font-weight:600">${esc(l.titre)}</h3>
+      <div class="specs">
+        <span class="spec"><b>${l.m2}</b><span>m²</span></span>
+        <span class="spec"><b>${l.pieces}</b><span>pièces</span></span>
+        <span class="spec"><b>${l.ch}</b><span>chambres</span></span>
+        <span class="spec"><b>${l.dpe}</b><span>DPE</span></span>
+      </div>
+      <span class="saving" style="align-self:stretch;justify-content:center">Commission évitée : ${eur(eco(l.prix))}</span>
+      <p class="prose">${esc(l.desc)}</p>
+      <div class="seller">
+        <span class="avatar" style="background:${teinte(v.nom)}">${initiales(v.nom)}</span>
+        <span class="seller-info">
+          <b>${esc(v.nom)}</b>
+          <span class="stars">${svg('<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/>')}${v.note.toFixed(1)} · ${v.avis} avis · ${esc(v.delai)}</span>
+        </span>
+        <span class="badge-verif">${svg(I.check)}Vérifié</span>
+      </div>
+      <div class="review">
+        <div class="review-head"><span>Ce que disent les visiteurs</span><span class="stars">${svg('<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/>')}${v.note.toFixed(1)}</span></div>
+        <p>« Annonce parfaitement fidèle, aucune mauvaise surprise à la visite. ${esc(v.nom.split(" ")[0])} avait préparé les diagnostics et le règlement de copropriété. »</p>
+      </div>
+      <div class="cta-row">
+        <button class="btn-app btn-primary" data-msg="${l.id}">${svg(I.chat)}Contacter</button>
+        <button class="btn-app btn-outline" data-visite="${l.id}">${svg(I.cal)}Visiter</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- estimation automatique ---------- */
+const DPE_K  = {A:1.07,B:1.05,C:1.02,D:1,E:.95,F:.90,G:.85};
+const KIND_K = {villa:1.12,loft:1.06,haussmann:1.04,appart:1.02,village:1,ferme:.92};
+function estimate(d){
+  const m2 = parseFloat(String(d.m2).replace(",","."));
+  if(!m2 || m2 <= 0) return null;
+  const base = PRIX_M2[(d.ville||"").trim().toLowerCase()] || 2800;
+  let k = (DPE_K[d.dpe]||1) * (KIND_K[d.kind]||1);
+  k *= m2 > 150 ? 0.93 : m2 < 45 ? 1.08 : 1;
+  const mid = base * m2 * k;
+  return {mid, low: mid*0.93, high: mid*1.07, m2:Math.round(base*k), connue:!!PRIX_M2[(d.ville||"").trim().toLowerCase()]};
+}
+function estimHTML(){
+  const e = estimate(state.draft);
+  if(!e) return `<div class="estim"><div class="estim-top">${svg(I.spark)}Estimation automatique</div>
+    <p style="font-size:12.5px;color:var(--on-light-mute);line-height:1.5">Renseignez la ville et la surface à l'étape précédente pour obtenir une fourchette de prix.</p></div>`;
+  const p = parseFloat(String(state.draft.prix).replace(/[^\d.]/g,""));
+  const lo = e.low*0.85, hi = e.high*1.15;
+  const pos = p ? Math.max(0,Math.min(100,(p-lo)/(hi-lo)*100)) : null;
+  let verdict = "";
+  if(p){
+    if(p < e.low) verdict = `<span style="color:var(--pine);font-weight:600">Sous le marché — vous devriez vendre vite.</span>`;
+    else if(p > e.high) verdict = `<span style="color:var(--rust);font-weight:600">Au-dessus du marché — attendez-vous à peu de visites.</span>`;
+    else verdict = `<span style="color:var(--pine);font-weight:600">Dans la fourchette du secteur.</span>`;
+  }
+  return `<div class="estim">
+    <div class="estim-top">${svg(I.spark)}Estimation automatique</div>
+    <b>${eur(e.mid)}</b>
+    <div class="range">Fourchette : ${eur(e.low)} — ${eur(e.high)} · base ${e.m2.toLocaleString("fr-FR")} €/m²</div>
+    <div class="gauge"><i style="left:${((e.low-lo)/(hi-lo))*100}%;width:${((e.high-e.low)/(hi-lo))*100}%"></i></div>
+    <div class="range" style="line-height:1.5">${p?verdict:"Saisissez votre prix pour vous situer."}
+    ${e.connue?"":"<br>Ville hors référentiel : base nationale appliquée."}</div>
+  </div>`;
+}
+
+/* ---------- écran de dépôt ---------- */
+function photoSlots(){
+  const ph = state.draft.photos;
+  const slots = [];
+  for(let i=0;i<6;i++){
+    if(ph[i]) slots.push(`<div class="photo-slot filled">
+      ${ph[i].startsWith("data:") ? `<img src="${ph[i]}" alt="Photo ${i+1}">` : `<span class="illus-wrap">${ph[i]}</span>`}
+      <button class="rm" data-rmphoto="${i}" aria-label="Retirer la photo ${i+1}">×</button>
+      ${i===0?'<span class="cover-tag">COUVERTURE</span>':""}</div>`);
+    else slots.push(`<button class="photo-slot" data-addphoto aria-label="Ajouter une photo">${svg(I.camera)}</button>`);
+  }
+  return slots.join("");
+}
+function viewPublish(){
+  if(state.step === 3) return successHTML();
+  const d = state.draft;
+  const head = `<div class="app-head"><div class="brandline"><span class="brandmark"><b>Déposer un bien</b></span>
+    <span style="font-family:var(--f-mono);font-size:10.5px;color:var(--on-light-mute)">${state.step+1} / 3</span></div></div>`;
+  const pips = `<div class="steps">${[0,1,2].map(i=>`<span class="step-pip ${i<state.step?"done":i===state.step?"now":""}"><i></i></span>`).join("")}</div>`;
+  let body = "";
+
+  if(state.step === 0){
+    body = `<div class="step-title"><span>Étape 1</span><b>Montrez le bien</b>
+      <p>La première photo devient la couverture dans le fil. Trois suffisent pour recevoir des demandes.</p></div>
+      <div class="photo-grid">${photoSlots()}</div>
+      <input type="file" id="fileIn" accept="image/*" multiple hidden>
+      <button class="pick" data-genphoto style="align-self:flex-start">Pas de photo ? Utiliser une illustration</button>
+      <div class="field"><label>Type de bien</label><div class="pickers">
+        ${TYPES.map(t=>`<button class="pick ${d.kind===t.id?"on":""}" data-kind="${t.id}">${t.label}</button>`).join("")}
+      </div></div>`;
+  }
+
+  if(state.step === 1){
+    body = `<div class="step-title"><span>Étape 2</span><b>Décrivez-le</b>
+      <p>Seuls le titre, la ville et la surface sont obligatoires. Le reste peut attendre.</p></div>
+      <div class="field"><label for="f-titre">Titre de l'annonce</label>
+        <input id="f-titre" data-f="titre" value="${esc(d.titre)}" placeholder="Maison de village avec terrasse" maxlength="80">
+        <span class="hint">Décrivez ce qui rend le bien différent, pas sa catégorie.</span></div>
+      <div class="grid2">
+        <div class="field"><label for="f-ville">Ville</label><input id="f-ville" data-f="ville" value="${esc(d.ville)}" placeholder="Uzès" list="villes"></div>
+        <div class="field"><label for="f-quartier">Quartier</label><input id="f-quartier" data-f="quartier" value="${esc(d.quartier)}" placeholder="Centre"></div>
+      </div>
+      <datalist id="villes">${VILLES.map(v=>`<option value="${v}">`).join("")}</datalist>
+      <div class="grid2">
+        <div class="field"><label for="f-m2">Surface habitable</label><input id="f-m2" data-f="m2" inputmode="decimal" value="${esc(d.m2)}" placeholder="142"><span class="hint">en m² loi Carrez</span></div>
+        <div class="field"><label for="f-dpe">Classe DPE</label><select id="f-dpe" data-f="dpe">${"ABCDEFG".split("").map(x=>`<option ${d.dpe===x?"selected":""}>${x}</option>`).join("")}</select></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Pièces</label><div class="stepper"><button data-inc="pieces" data-by="-1" aria-label="Moins de pièces">−</button><b>${d.pieces}</b><button data-inc="pieces" data-by="1" aria-label="Plus de pièces">+</button></div></div>
+        <div class="field"><label>Chambres</label><div class="stepper"><button data-inc="ch" data-by="-1" aria-label="Moins de chambres">−</button><b>${d.ch}</b><button data-inc="ch" data-by="1" aria-label="Plus de chambres">+</button></div></div>
+      </div>
+      <div class="field"><label for="f-desc">Description</label>
+        <textarea id="f-desc" data-f="desc" placeholder="Ce que vous diriez à un ami qui visite pour la première fois…" maxlength="600">${esc(d.desc)}</textarea></div>`;
+  }
+
+  if(state.step === 2){
+    const p = parseFloat(String(d.prix).replace(/[^\d.]/g,"")) || 0;
+    body = `<div class="step-title"><span>Étape 3</span><b>Fixez votre prix</b>
+      <p>Vous restez maître du montant. L'estimation situe votre bien par rapport aux ventes du secteur.</p></div>
+      <div id="estimBox">${estimHTML()}</div>
+      <div class="field"><label for="f-prix">Prix de vente</label>
+        <input id="f-prix" data-f="prix" inputmode="numeric" value="${esc(d.prix)}" placeholder="389000">
+        <span class="hint">En euros, hors frais de notaire.</span></div>
+      <div class="recap">
+        <div class="recap-row"><span>Dépôt de l'annonce</span><b>Gratuit</b></div>
+        <div class="recap-row"><span>Mise en ligne</span><b>Immédiate</b></div>
+        <div class="recap-row"><span>Commission à la signature</span><b>990 € plafonnés</b></div>
+        <div class="recap-row"><span>Commission d'agence évitée</span><b style="color:var(--pine)">${p?eur(eco(p)):"—"}</b></div>
+      </div>
+      <p class="hint" style="font-size:10.5px;color:var(--on-light-mute);line-height:1.5">Démonstration : l'annonce est enregistrée dans ce navigateur uniquement, rien n'est envoyé.</p>`;
+  }
+
+  return `<div class="view-pad">${head}<div class="wizard">${pips}${body}
+    <div class="wiz-nav">
+      ${state.step>0?`<button class="btn-app btn-outline" data-wiz="prev">Retour</button>`:""}
+      <button class="btn-app btn-primary" data-wiz="next">${state.step===2?"Publier l'annonce":"Continuer"}${state.step===2?"":""}</button>
+    </div></div></div>`;
+}
+
+function successHTML(){
+  const l = state.mine[0];
+  if(!l) return viewFeed();
+  return `<div class="view-pad" style="height:100%"><div class="success">
+    <span class="success-mark">${svg(I.check)}</span>
+    <h4>Votre annonce est en ligne</h4>
+    <p>« ${esc(l.titre)} » est visible par tous les acheteurs du secteur. Vous n'avez rien payé.</p>
+    <div class="success-stat">
+      <div><b>${eur(eco(l.prix))}</b><span>de commission évitée</span></div>
+      <div><b>0 €</b><span>versés à ce jour</span></div>
+      <div><b>3 min</b><span>pour la déposer</span></div>
+    </div>
+    <div style="display:flex;gap:9px;width:100%;margin-top:8px">
+      <button class="btn-app btn-primary" data-open="${l.id}">Voir ma fiche</button>
+      <button class="btn-app btn-outline" data-goto-tab="feed">Le fil</button>
+    </div>
+  </div></div>`;
+}
+
+/* ---------- messages ---------- */
+const THREADS = [
+  {id:"t1",nom:"Camille R.",bien:"Maison de village, Uzès",quand:"09:12",unread:true,
+   apercu:"Oui, la terrasse fait bien 30 m². Samedi 14 h vous irait ?",
+   msgs:[
+     {q:"sys",t:"Vous avez contacté Camille via l'annonce"},
+     {q:"me",t:"Bonjour Camille, la terrasse est-elle vraiment exposée sud ? Et le chauffage, c'est quoi ?",h:"08:54"},
+     {q:"them",t:"Bonjour ! Oui plein sud, on y déjeune jusqu'en novembre. Pompe à chaleur posée en 2021, environ 90 € par mois l'hiver.",h:"09:03"},
+     {q:"me",t:"Parfait. Une visite serait possible ce week-end ?",h:"09:10"},
+     {q:"them",t:"Oui, la terrasse fait bien 30 m². Samedi 14 h vous irait ?",h:"09:12"}
+   ]},
+  {id:"t2",nom:"Idriss M.",bien:"Trois pièces, Montpellier",quand:"Hier",unread:false,
+   apercu:"Je vous envoie le règlement de copropriété ce soir.",
+   msgs:[
+     {q:"sys",t:"Visite confirmée pour jeudi 18 h"},
+     {q:"them",t:"Je vous envoie le règlement de copropriété ce soir.",h:"19:41"}
+   ]},
+  {id:"t3",nom:"Sofia B.",bien:"Loft, La Belle de Mai",quand:"Lun.",unread:false,
+   apercu:"Le loyer d'un bail commercial serait possible, oui.",
+   msgs:[{q:"them",t:"Le loyer d'un bail commercial serait possible, oui.",h:"11:20"}]}
+];
+/* La conversation liée à l'annonce déposée est créée une seule fois :
+   la recréer à chaque appel effacerait les messages envoyés. */
+function myThread(){
+  const l = state.mine[0];
+  if(!l){ state.myThread = null; return null; }
+  if(state.myThread && state.myThread.bienId === l.id) return state.myThread;
+  state.myThread = {
+    id:"tm", bienId:l.id, nom:"Nadia K.", bien:l.titre, quand:"À l'instant", unread:true,
+    apercu:"Bonjour, votre annonce vient de sortir — elle est encore disponible ?",
+    msgs:[
+      {q:"sys",t:"Nouvelle demande sur votre annonce"},
+      {q:"them",t:`Bonjour, votre annonce « ${l.titre} » vient de sortir dans mon fil — elle est encore disponible ?`,h:"maintenant"}
+    ]};
+  return state.myThread;
+}
+const allThreads = ()=>{const m=myThread();return m?[m,...THREADS]:THREADS};
+
+function viewChat(){
+  if(state.chatOpen){
+    const t = allThreads().find(x=>x.id===state.chatOpen) || allThreads()[0];
+    return `<div class="chat">
+      <div class="chat-head">
+        <button class="icon-btn" data-chatback aria-label="Retour">${svg(I.back)}</button>
+        <span class="avatar" style="width:34px;height:34px;border-radius:11px;font-size:13px;background:${teinte(t.nom)}">${initiales(t.nom)}</span>
+        <span><b>${esc(t.nom)}</b><small>${esc(t.bien)}</small></span>
+      </div>
+      <div class="chat-body" id="chatBody">
+        ${t.msgs.map(m=>m.q==="sys"
+          ? `<span class="chat-sys">${esc(m.t)}</span>`
+          : `<span class="bubble ${m.q}">${esc(m.t)}<time>${esc(m.h||"")}</time></span>`).join("")}
+      </div>
+      <div class="chat-input">
+        <label class="searchbar" style="background:var(--paper-2)"><input type="text" id="chatIn" placeholder="Écrire un message…" aria-label="Message"></label>
+        <button class="send" data-send aria-label="Envoyer">${svg(I.send)}</button>
+      </div>
+    </div>`;
+  }
+  return `<div class="view-pad">
+    <div class="app-head"><div class="brandline"><span class="brandmark"><b>Messages</b></span></div></div>
+    <div class="threads">${allThreads().map(t=>`
+      <button class="thread" data-thread="${t.id}">
+        <span class="avatar" style="background:${teinte(t.nom)}">${initiales(t.nom)}</span>
+        <span class="thread-main">
+          <span class="thread-top"><b>${esc(t.nom)}</b><span>${esc(t.quand)}</span></span>
+          <p>${esc(t.apercu)}</p>
+          <span style="font-family:var(--f-mono);font-size:10px;color:var(--pine)">${esc(t.bien)}</span>
+        </span>
+        ${t.unread?'<span class="unread"></span>':""}
+      </button>`).join("")}</div>
+  </div>`;
+}
+
+/* ---------- profil vendeur ---------- */
+function viewProfile(){
+  const mine = state.mine;
+  const totalEco = mine.reduce((s,l)=>s+eco(l.prix),0);
+  const vues = mine.reduce((s,l)=>s+l.vues,0);
+  const favs = mine.reduce((s,l)=>s+l.favs,0);
+  return `<div class="view-pad">
+    <div class="app-head"><div class="brandline"><span class="brandmark"><b>Mon espace</b></span>
+      <button class="icon-btn" aria-label="Réglages">${svg('<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1M18.7 18.7l-2.1-2.1M7.4 7.4 5.3 5.3"/>')}</button>
+    </div></div>
+    <div class="profile">
+      <div class="profile-head">
+        <span class="avatar" style="background:var(--pine)">RB</span>
+        <span><b>Romain B.</b><span class="badge-verif">${svg(I.check)}Identité vérifiée</span></span>
+      </div>
+      <div class="econo">
+        <span>Commission d'agence évitée</span>
+        <b>${eur(Math.max(0,totalEco))}</b>
+        <p>${mine.length?`Sur ${mine.length} bien${mine.length>1?"s":""} en ligne, à comparer aux 4,5 % qu'une agence aurait facturés. Vous ne paierez 990 € qu'à la signature.`:"Déposez votre premier bien pour voir ce que vous n'aurez pas à verser."}</p>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b>${vues.toLocaleString("fr-FR")}</b><span>vues</span><span class="delta">${vues?"+18 % / 7 j":"en attente"}</span></div>
+        <div class="kpi"><b>${favs}</b><span>favoris</span><span class="delta">${favs?"+6 aujourd'hui":"—"}</span></div>
+        <div class="kpi"><b>${mine.length?1:0}</b><span>demande${mine.length?"":"s"}</span><span class="delta">${mine.length?"à répondre":"—"}</span></div>
+      </div>
+      <div class="sec-label" style="padding:6px 0 2px"><b>Mes annonces</b><span>${mine.length} EN LIGNE</span></div>
+      ${mine.length ? `<div class="mini-list">${mine.map(l=>`
+        <button class="mini" data-open="${l.id}">
+          <span class="mini-thumb">${media(l)}</span>
+          <span class="mini-main"><b>${esc(l.titre)}</b><span>${eur(l.prix)} · ${l.m2} m² · ${esc(l.ville)}</span></span>
+          <span class="status-pill">En ligne</span>
+        </button>`).join("")}</div>`
+        : `<div class="empty">${svg(I.box)}<b>Aucune annonce</b><p>Le dépôt prend trois minutes et ne coûte rien. Essayez, le formulaire fonctionne.</p>
+           <button class="btn-app btn-primary" data-goto-tab="publish" style="flex:0 0 auto;padding-inline:20px;margin-top:4px">Déposer un bien</button></div>`}
+      <div class="mini-list">
+        <div class="mini" style="cursor:default"><span class="status-pill wait">À venir</span>
+          <span class="mini-main"><b>Diagnostics obligatoires</b><span>Pack à 189 €, sous 72 h</span></span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   6. CONTRÔLEUR
+   ============================================================ */
+const VIEWS = {feed:viewFeed, favs:viewFavs, publish:viewPublish, chat:viewChat, profile:viewProfile, detail:viewDetail};
+
+function render(){
+  const node = document.createElement("div");
+  node.className = "view";
+  node.innerHTML = (VIEWS[state.tab] || viewFeed)();
+  views.replaceChildren(node);
+  requestAnimationFrame(()=>node.classList.add("on"));
+  renderTabs();
+  syncFeatures();
+}
+function go(tab){
+  if(tab === "publish" && state.step === 3){ state.step = 0; state.draft = blankDraft(); }
+  if(tab !== "chat") state.chatOpen = null;
+  state.tab = tab;
+  render();
+}
+function openDetail(id){ state.current = id; state.tab = "detail"; render(); }
+
+let toastT;
+function toast(msg){
+  const el = document.getElementById("toast");
+  document.getElementById("toastMsg").textContent = msg;
+  el.classList.add("on");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>el.classList.remove("on"), 2600);
+}
+
+/* ---------- clics dans l'app ---------- */
+views.addEventListener("click", ev=>{
+  const t = ev.target;
+  const q = s=>t.closest(s);
+
+  const fav = q("[data-fav]");
+  if(fav){
+    ev.preventDefault(); ev.stopPropagation();
+    const id = fav.dataset.fav;
+    state.favs.has(id) ? state.favs.delete(id) : state.favs.add(id);
+    save();
+    fav.classList.toggle("on", state.favs.has(id));
+    toast(state.favs.has(id) ? "Ajouté à vos favoris" : "Retiré des favoris");
+    return;
+  }
+  const open = q("[data-open]");      if(open){ openDetail(open.dataset.open); return; }
+  const gt   = q("[data-goto-tab]");  if(gt){ go(gt.dataset.gotoTab); return; }
+  const back = q("[data-back]");      if(back){ go("feed"); return; }
+  const fil  = q("[data-filter]");    if(fil){ state.filter = fil.dataset.filter; render(); return; }
+  const th   = q("[data-thread]");    if(th){ state.chatOpen = th.dataset.thread; state.tab="chat"; render(); return; }
+  if(q("[data-chatback]")){ state.chatOpen = null; render(); return; }
+  const msg  = q("[data-msg]");       if(msg){ state.tab="chat"; state.chatOpen = allThreads()[0].id; render(); return; }
+  if(q("[data-visite]")){ toast("Demande de visite envoyée"); return; }
+  if(q("[data-send]")){
+    const inp = document.getElementById("chatIn");
+    if(inp && inp.value.trim()){ pushMessage(inp.value.trim()); } 
+    return;
+  }
+
+  /* --- dépôt d'annonce --- */
+  const kind = q("[data-kind]");
+  if(kind){ state.draft.kind = kind.dataset.kind; render(); return; }
+  const inc = q("[data-inc]");
+  if(inc){
+    const k = inc.dataset.inc;
+    state.draft[k] = Math.max(1, Math.min(20, state.draft[k] + Number(inc.dataset.by)));
+    render(); return;
+  }
+  if(q("[data-addphoto]")){ const f = document.getElementById("fileIn"); if(f) f.click(); return; }
+  const rm = q("[data-rmphoto]");
+  if(rm){ state.draft.photos.splice(Number(rm.dataset.rmphoto),1); render(); return; }
+  if(q("[data-genphoto]")){
+    if(state.draft.photos.length >= 6){ toast("Six photos, c'est déjà bien"); return; }
+    state.draft.photos.push(illus(state.draft.kind, Date.now() + state.draft.photos.length));
+    render(); return;
+  }
+  const wiz = q("[data-wiz]");
+  if(wiz){ wiz.dataset.wiz === "prev" ? prevStep() : nextStep(); return; }
+});
+
+/* ---------- saisie ---------- */
+views.addEventListener("input", ev=>{
+  if(ev.target.dataset && "search" in ev.target.dataset){ filterCards(ev.target.value); return; }
+  const f = ev.target.dataset && ev.target.dataset.f;
+  if(!f) return;
+  state.draft[f] = ev.target.value;
+  ev.target.closest(".field")?.classList.remove("err");
+  const box = document.getElementById("estimBox");
+  if(box && (f === "prix" || f === "m2" || f === "ville")) box.innerHTML = estimHTML();
+  if(f === "prix"){
+    const p = parseFloat(String(ev.target.value).replace(/[^\d.]/g,"")) || 0;
+    const cell = document.querySelector(".recap-row:last-child b");
+    if(cell) cell.textContent = p ? eur(eco(p)) : "—";
+  }
+});
+views.addEventListener("keydown", ev=>{
+  if(ev.key === "Enter" && ev.target.id === "chatIn"){ ev.preventDefault(); if(ev.target.value.trim()) pushMessage(ev.target.value.trim()); }
+});
+
+/* filtrage en place : re-rendre ferait perdre le focus du champ */
+function filterCards(q){
+  const needle = q.trim().toLowerCase();
+  const list = views.querySelector(".cards");
+  if(!list) return;
+  let n = 0;
+  list.querySelectorAll(".card").forEach(c=>{
+    const hit = !needle || c.textContent.toLowerCase().includes(needle);
+    c.hidden = !hit;
+    if(hit) n++;
+  });
+  const label = views.querySelector(".sec-label b");
+  if(label) label.textContent = `${n} bien${n>1?"s":""} ${needle?"trouvé"+(n>1?"s":""):"près de vous"}`;
+}
+
+/* ---------- photos : lecture et réduction ---------- */
+views.addEventListener("change", ev=>{
+  if(ev.target.id !== "fileIn") return;
+  const files = [...ev.target.files].slice(0, 6 - state.draft.photos.length);
+  if(!files.length) return;
+  let pending = files.length;
+  files.forEach(file=>{
+    shrink(file, url=>{
+      if(url) state.draft.photos.push(url);
+      if(--pending === 0) render();
+    });
+  });
+});
+function shrink(file, done){
+  if(!file.type.startsWith("image/")){ done(null); return; }
+  const reader = new FileReader();
+  reader.onerror = ()=>done(null);
+  reader.onload = () => {
+    const img = new Image();
+    img.onerror = ()=>done(null);
+    img.onload = ()=>{
+      const max = 760;
+      const r = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * r);
+      c.height = Math.round(img.height * r);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      try{ done(c.toDataURL("image/jpeg", 0.72)); }catch(e){ done(null); }
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ---------- assistant : navigation et validation ---------- */
+function prevStep(){ state.step = Math.max(0, state.step - 1); render(); }
+function nextStep(){
+  if(state.step === 1){
+    const d = state.draft;
+    const bad = [];
+    if(!d.titre.trim()) bad.push("titre");
+    if(!d.ville.trim()) bad.push("ville");
+    if(!(parseFloat(String(d.m2).replace(",",".")) > 0)) bad.push("m2");
+    if(bad.length){
+      bad.forEach(k=>document.querySelector(`[data-f="${k}"]`)?.closest(".field")?.classList.add("err"));
+      document.querySelector(`[data-f="${bad[0]}"]`)?.focus();
+      toast("Titre, ville et surface sont nécessaires");
+      return;
+    }
+  }
+  if(state.step === 2){ publish(); return; }
+  state.step++;
+  render();
+}
+function publish(){
+  const d = state.draft;
+  const prix = parseFloat(String(d.prix).replace(/[^\d.]/g,""));
+  if(!(prix > 0)){
+    document.querySelector('[data-f="prix"]')?.closest(".field")?.classList.add("err");
+    document.querySelector('[data-f="prix"]')?.focus();
+    toast("Indiquez un prix de vente");
+    return;
+  }
+  const m2 = parseFloat(String(d.m2).replace(",","."));
+  state.mine.unshift({
+    id:"m"+Date.now(), mine:true, neuf:true, kind:d.kind,
+    titre:d.titre.trim(), ville:d.ville.trim(), quartier:d.quartier.trim(),
+    prix, m2:Math.round(m2), pieces:d.pieces, ch:d.ch, dpe:d.dpe,
+    desc:d.desc.trim() || "Le propriétaire n'a pas encore rédigé de description. Contactez-le directement, il répond vite.",
+    photos:d.photos.slice(),
+    vendeur:{nom:"Romain B.",note:5.0,avis:0,delai:"répond en ~1 h"},
+    vues:0, favs:0, visites:0
+  });
+  save();
+  state.step = 3;
+  render();
+  toast("Annonce publiée — et elle est dans le fil");
+}
+function pushMessage(text){
+  const t = allThreads().find(x=>x.id===state.chatOpen);
+  if(!t) return;
+  t.msgs.push({q:"me", t:text, h:"maintenant"});
+  t.apercu = text; t.unread = false;
+  render();
+  const body = document.getElementById("chatBody");
+  if(body) body.scrollTop = body.scrollHeight;
+}
+
+/* ---------- barre d'onglets ---------- */
+tabbar.addEventListener("click", ev=>{
+  const b = ev.target.closest("[data-tab]");
+  if(b) go(b.dataset.tab);
+});
+
+/* ---------- synchronisation avec la liste de fonctionnalités ---------- */
+const featureList = document.getElementById("featureList");
+function syncFeatures(){
+  const map = {feed:"feed", detail:"detail", publish:"publish", chat:"chat", profile:"profile", favs:"feed"};
+  const key = map[state.tab] || "feed";
+  featureList.querySelectorAll(".feature").forEach(f=>f.classList.toggle("on", f.dataset.goto === key));
+}
+featureList.addEventListener("click", ev=>{
+  const b = ev.target.closest(".feature");
+  if(!b) return;
+  const g = b.dataset.goto;
+  if(g === "detail"){ openDetail(state.current || SEED[0].id); }
+  else if(g === "chat"){ state.chatOpen = allThreads()[0].id; state.tab = "chat"; render(); }
+  else go(g);
+  document.querySelector(".phone").scrollIntoView({behavior:"smooth", block:"nearest"});
+});
+
+/* ============================================================
+   7. ÉLÉMENTS DE PAGE
+   ============================================================ */
+function keySVG(size){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <circle cx="8.5" cy="8.5" r="4.6" stroke="#0E5C43" stroke-width="1.9"/>
+    <path d="M11.8 11.8 20 20M17 17l2.4-2.4M14.4 14.4l2 2" stroke="#C89A47" stroke-width="1.9" stroke-linecap="round"/>
+  </svg>`;
+}
+document.getElementById("footKey").innerHTML = keySVG(22);
+
+/* collage du héros */
+(function heroCollage(){
+  const el = document.getElementById("heroCollage");
+  const a = SEED[2], b = SEED[0];
+  el.innerHTML = `
+  <div style="position:relative;height:470px">
+    <div style="position:absolute;right:0;top:8px;width:74%;transform:rotate(3.2deg);opacity:.92;filter:saturate(.92)">
+      <div class="card" style="pointer-events:none;box-shadow:0 26px 48px -26px rgba(0,0,0,.7)">
+        <span class="card-media">${illus(b.kind, 7)}</span>
+        <span class="card-body"><span class="card-price"><b>${eur(b.prix)}</b><i>${Math.round(b.prix/b.m2)} €/m²</i></span>
+        <span class="card-meta"><span>${b.ville}</span><i class="sep"></i><span>${b.m2} m²</span></span></span>
+      </div>
+    </div>
+    <div style="position:absolute;left:0;top:78px;width:80%;transform:rotate(-2.4deg)">
+      <div class="card" style="pointer-events:none;box-shadow:0 34px 60px -28px rgba(0,0,0,.85)">
+        <span class="card-media">${illus(a.kind, 3)}
+          <span class="card-tags"><span class="tag">Particulier</span><span class="tag new">Vérifié</span></span></span>
+        <span class="card-body">
+          <span class="card-price"><b>${eur(a.prix)}</b><i>${Math.round(a.prix/a.m2)} €/m²</i></span>
+          <span class="card-title">${a.titre}</span>
+          <span class="card-meta"><span>${a.ville}</span><i class="sep"></i><span>${a.m2} m²</span><i class="sep"></i><span>${a.pieces} pièces</span>
+          <span class="dpe" style="background:${DPE_C[a.dpe]}">${a.dpe}</span></span>
+        </span>
+      </div>
+    </div>
+    <div style="position:absolute;right:1%;bottom:0;background:var(--pine-950);border:1px solid var(--line-dark);border-radius:16px;padding:13px 16px;box-shadow:0 20px 40px -20px rgba(0,0,0,.9)">
+      <div style="font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass)">Commission d'agence</div>
+      <div style="font-family:var(--f-mono);font-size:22px;font-weight:600;letter-spacing:-.03em;color:var(--on-dark);text-decoration:line-through;text-decoration-color:var(--rust);text-decoration-thickness:2px">38 025 €</div>
+      <div style="font-family:var(--f-mono);font-size:11px;color:var(--on-dark-mute);margin-top:3px">remplacée par 990 €</div>
+    </div>
+  </div>`;
+})();
+
+/* révélation au défilement */
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+}, {rootMargin:"0px 0px -8% 0px", threshold:.08});
+document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+
+/* horloge du téléphone */
+(function clock(){
+  const el = document.getElementById("clock");
+  const tick = ()=>{
+    const d = new Date();
+    el.textContent = d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");
+  };
+  tick(); setInterval(tick, 20000);
+})();
+
+/* ---------- démarrage ---------- */
+load();
+render();
+</script>
+</body></html>
