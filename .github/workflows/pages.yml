@@ -1,0 +1,43 @@
+name: Déploiement de la vitrine
+
+on:
+  push:
+    branches: [claude/real-estate-showcase-app-xz5vek]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois ; on laisse finir celui en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Régénère index.html depuis showcase.html
+        run: |
+          ./build.sh
+          mkdir -p _site
+          cp index.html _site/index.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploiement
+        uses: actions/deploy-pages@v4
