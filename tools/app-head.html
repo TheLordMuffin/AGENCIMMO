@@ -1,0 +1,82 @@
+<title>AGENCIMMO</title>
+<meta name="theme-color" content="#0F231B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AGENCIMMO">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ============================================================
+   AGENCIMMO — l'application.
+   Plein écran sur téléphone, encadrée sur grand écran.
+   Univers visuel unique et assumé : toutes les couleurs sont
+   peintes explicitement, aucune ne dépend du thème de l'hôte.
+   ============================================================ */
+:root{
+  --ink:#08130F;
+  --pine-950:#0B1913;
+  --pine-900:#0F231B;
+  --pine-800:#153125;
+  --pine:#0E5C43;
+  --brass:#C89A47;
+  --brass-bright:#E3B95F;
+  --brass-dim:#8E6D31;
+  --paper:#EEF2EA;
+  --paper-2:#E4EADE;
+  --paper-3:#D7E0D0;
+  --chalk:#FBFCF9;
+  --on-dark:#E9EFE6;
+  --on-dark-mute:#9BB0A3;
+  --on-light:#0F1F18;
+  --on-light-mute:#55685D;
+  --rust:#B4523A;
+  --line-light:rgba(15,35,27,.13);
+  --line-dark:rgba(200,154,71,.20);
+
+  --f-display:"Fraunces","Iowan Old Style",Georgia,serif;
+  --f-sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--f-sans);
+  background:var(--pine-950);
+  color:var(--on-light);
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;
+}
+img{max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--pine);outline-offset:2px;border-radius:6px}
+
+/* ---------- châssis ---------- */
+.shell{min-height:100dvh;display:grid;place-items:center;padding:0}
+.app{
+  position:relative;
+  width:100%;max-width:440px;
+  height:100dvh;max-height:940px;
+  display:flex;flex-direction:column;
+  background:var(--chalk);color:var(--on-light);
+  overflow:hidden;isolation:isolate;
+}
+/* Sur grand écran, l'app est présentée comme un appareil ; sur téléphone
+   elle occupe tout, sans cadre ni ombre. */
+@media (min-width:521px){
+  .shell{padding:24px;background:
+    radial-gradient(120% 90% at 70% 0%, rgba(200,154,71,.10), transparent 60%),
+    var(--pine-950);}
+  .app{border-radius:34px;box-shadow:0 40px 90px -40px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06)}
+}
+/* ---------- réinitialisation de la démo ---------- */
+.reset{
+  margin-top:4px;align-self:flex-start;
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.03em;
+  color:var(--on-light-mute);text-decoration:underline;
+  text-underline-offset:3px;padding:6px 0;
+}
+.reset:hover{color:var(--rust)}

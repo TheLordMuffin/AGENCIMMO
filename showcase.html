@@ -339,10 +339,33 @@ h1 em{font-style:italic;color:var(--brass-bright);font-variation-settings:"SOFT"
   color:var(--pine);background:rgba(14,92,67,.1);padding:4px 8px;border-radius:6px;
 }
 .badge-verif svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.seller-sub{font-size:11.5px;color:var(--on-light-mute);line-height:1.4}
+.trust{border:1px solid var(--line-light);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:11px}
+.trust-head{display:flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--pine)}
+.trust-head svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.facts{display:flex;flex-wrap:wrap;gap:6px}
+.fact{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--pine);background:rgba(14,92,67,.09);padding:5px 9px;border-radius:7px}
+.fact svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.measures{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;border-top:1px solid var(--line-light);padding-top:11px}
+.measures span{display:flex;flex-direction:column;gap:2px;font-size:9.5px;color:var(--on-light-mute);line-height:1.3}
+.measures b{font-family:var(--f-mono);font-size:14px;font-weight:600;color:var(--on-light);font-variant-numeric:tabular-nums}
+.conform,.histo{display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.5;color:var(--on-light-mute)}
+.conform b{color:var(--on-light)}
+.conform.muted{color:#8C9A92}
+.conform svg,.histo svg{width:14px;height:14px;flex:none;margin-top:2px;stroke:var(--brass-dim);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.no-rating{font-size:10.5px;line-height:1.5;color:#8C9A92;border-top:1px solid var(--line-light);padding-top:10px}
 .review{border-top:1px solid var(--line-light);padding-top:12px;display:flex;flex-direction:column;gap:6px}
 .review-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600}
 .review p{font-size:12.5px;line-height:1.55;color:var(--on-light-mute)}
-.cta-row{display:flex;gap:9px;position:sticky;bottom:0;padding-top:4px}
+/* Barre d'action collante : sans fond opaque, le contenu défile dessous
+   et se lit à travers. Les marges négatives compensent le retrait de
+   .detail-body pour qu'elle occupe toute la largeur. */
+.cta-row{
+  display:flex;gap:9px;position:sticky;bottom:0;z-index:5;
+  margin:0 -18px -20px;padding:10px 18px 14px;
+  background:var(--chalk);
+  box-shadow:0 -10px 18px -10px rgba(15,35,27,.18);
+}
 .btn-app{
   flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;
   padding:14px;border-radius:14px;font-size:13.5px;font-weight:600;
@@ -513,10 +536,13 @@ h1 em{font-style:italic;color:var(--brass-bright);font-variation-settings:"SOFT"
   border-radius:14px;padding:12px 14px;
   display:flex;align-items:center;gap:10px;font-size:12.5px;
   box-shadow:0 16px 34px -16px rgba(0,0,0,.8);
-  transform:translateY(130%);transition:transform .34s cubic-bezier(.2,.9,.3,1);
+  opacity:0;visibility:hidden;transform:translateY(14px);
+  transition:opacity .24s ease,transform .34s cubic-bezier(.2,.9,.3,1),visibility .24s;
   pointer-events:none; /* ne doit jamais bloquer une carte pendant ses 2,6 s */
 }
-.toast.on{transform:none}
+/* Masqué par opacité et visibilité, jamais par un simple décalage : selon
+   la hauteur à laquelle il flotte, un translate ne le sort pas de l'écran. */
+.toast.on{opacity:1;visibility:visible;transform:none}
 .toast svg{width:17px;height:17px;stroke:var(--brass);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 /* ============================ SECTION PRODUIT ============================ */
@@ -655,7 +681,7 @@ footer{background:var(--ink);color:var(--on-dark-mute);padding-block:44px;font-s
     <div class="hero-copy">
       <p class="eyebrow">Projet — marketplace immobilière entre particuliers</p>
       <h1>Vendre son bien ne devrait pas coûter <em>le prix d'une voiture.</em></h1>
-      <p class="lede">AGENCIMMO met le vendeur et l'acheteur en relation directe, avec la légèreté de Vinted et la confiance de TripAdvisor&nbsp;: profils vérifiés, avis publics, accompagnement à la carte. La commission d'agence devient un choix, plus une fatalité.</p>
+      <p class="lede">AGENCIMMO met le vendeur et l'acheteur en relation directe, avec la légèreté de Vinted&nbsp;: identités contrôlées, annonces certifiées conformes par ceux qui les ont visitées, accompagnement à la carte. La commission d'agence devient un choix, plus une fatalité.</p>
       <div class="hero-stats">
         <span class="chip-stat"><b>10 800 €</b><span>commission d'agence moyenne</span></span>
         <span class="chip-stat"><b>0 €</b><span>pour déposer une annonce</span></span>
@@ -764,7 +790,7 @@ footer{background:var(--ink);color:var(--on-dark-mute);padding-block:44px;font-s
           <li>Dépôt gratuit, sans mandat, sans engagement de durée</li>
           <li>Vues, favoris et demandes de visite visibles en direct</li>
           <li>Services à la carte : photos, diagnostics, accompagnement juridique</li>
-          <li>Vendeurs et acheteurs notés publiquement, comme sur TripAdvisor</li>
+          <li>Identités contrôlées et exactitude de l'annonce vérifiée par les visiteurs</li>
         </ul>
       </div>
     </div>
@@ -793,20 +819,25 @@ footer{background:var(--ink);color:var(--on-dark-mute);padding-block:44px;font-s
       <div class="sec-head rv" style="margin-bottom:0">
         <p class="eyebrow">Notre différence</p>
         <h2>Le particulier à particulier existe déjà. Ce qui manque, c'est la confiance.</h2>
-        <p class="lede">Sur les sites d'annonces actuels, on ne sait rien du vendeur d'en face. C'est exactement le problème que TripAdvisor a résolu pour les restaurants et Airbnb pour les logements : rendre la réputation visible, publique et cumulative.</p>
+        <p class="lede">Sur les sites d'annonces actuels, on ne sait rien du vendeur d'en face. La réponse évidente serait de le noter, comme un restaurant ou un logement de vacances. Sauf qu'en immobilier, cette réponse est fausse.</p>
       </div>
       <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="panel rv rv-1">
-          <h3>Identité vérifiée</h3>
-          <p>Pièce d'identité et titre de propriété contrôlés avant publication. Un badge que l'acheteur voit avant même d'ouvrir la fiche — et qui élimine les annonces fantômes.</p>
+        <div class="panel rv rv-1" style="border-color:rgba(180,82,58,.4)">
+          <h3>Pourquoi nous ne notons pas les vendeurs</h3>
+          <p>Un bien, un acheteur. Sur vingt visiteurs, dix-neuf repartent sans rien. Noter le vendeur revient à le punir d'avoir fait le seul choix possible&nbsp;: en refuser dix-neuf. On ouvrirait la porte aux représailles d'une offre déclinée, et à un chantage à l'étoile pendant la négociation.</p>
+          <p>Le déséquilibre achève le mécanisme. Un hôte reçoit deux cents voyageurs, un mauvais avis se noie. Un vendeur vend une fois&nbsp;: un seul avis vengeur, et sa réputation est faite, définitivement.</p>
         </div>
         <div class="panel rv rv-2">
-          <h3>Avis publics des deux côtés</h3>
-          <p>L'acheteur note le vendeur sur la fiabilité de l'annonce et la qualité de la visite. Le vendeur note l'acheteur sur son sérieux. Les deux réputations se construisent, et se perdent.</p>
+          <h3>Ce que nous publions à la place</h3>
+          <p>Des faits que nous contrôlons avant publication&nbsp;: identité, titre de propriété, diagnostics, surface certifiée, documents de copropriété. Un acheteur en colère ne peut pas les réécrire.</p>
         </div>
         <div class="panel rv rv-3">
-          <h3>Délai de réponse affiché</h3>
-          <p>« Répond en 1 h » n'est pas un argument marketing, c'est une mesure. Elle pousse mécaniquement les vendeurs à répondre — et c'est là que se joue la conversion.</p>
+          <h3>Et des comportements que nous mesurons</h3>
+          <p>Délai et taux de réponse, visites honorées, historique de prix depuis la mise en ligne. Ce ne sont pas des opinions, ce sont des horodatages. « Répond en 1 h » devient une mesure, et c'est là que se joue la conversion.</p>
+        </div>
+        <div class="panel rv rv-3">
+          <h3>Le seul jugement humain que nous gardons</h3>
+          <p>Après une visite réellement effectuée, l'acheteur répond à une question fermée&nbsp;: le bien correspondait-il à l'annonce&nbsp;? Le résultat n'est publié qu'en agrégé, à partir de trois réponses. On note l'exactitude de l'annonce, jamais la personne — et refuser une offre ne rend pas une annonce inexacte.</p>
         </div>
       </div>
     </div>
@@ -1055,25 +1086,58 @@ const PRIX_M2 = {
 const VILLES = ["Uzès","Nîmes","Montpellier","Avignon","Sète","Arles","Alès","Aix-en-Provence","Marseille","Perpignan","Lyon","Bordeaux","Nantes","Toulouse","Paris","Lille","Rennes","Strasbourg"];
 const DPE_C = {A:"#128A5A",B:"#4E9B3F",C:"#8CA82E",D:"#C9A227",E:"#D07C24",F:"#C4553D",G:"#A33227"};
 
+const VERIF = {
+  identite:"Identité vérifiée",
+  propriete:"Titre de propriété vérifié",
+  diagnostics:"Diagnostics fournis",
+  carrez:"Surface certifiée Carrez",
+  copro:"Documents de copropriété fournis"
+};
+/* Aucune note sur les personnes : voir la note de conception dans le README.
+   Seuls des faits vérifiables et des comportements mesurés par la plateforme. */
 const SEED = [
   {id:"s1",kind:"village",titre:"Maison de village rénovée avec terrasse",ville:"Uzès",quartier:"Centre historique",prix:389000,m2:142,pieces:5,ch:3,dpe:"C",
    desc:"Une maison en pierre entièrement reprise en 2021 : poutres apparentes, sol en tomettes d'origine, cuisine ouverte sur une terrasse de 30 m² orientée sud. À quatre minutes à pied de la place aux Herbes.",
-   vendeur:{nom:"Camille R.",note:4.9,avis:12,delai:"répond en ~1 h"},vues:1284,favs:96,visites:8},
+   vendeur:{nom:"Camille R.",delai:"~1 h",depuis:"mars 2026"},
+   verif:["identite","propriete","diagnostics","carrez"],
+   repond:"98 %",honorees:"8 / 8",conforme:{oui:11,total:12},
+   histo:"Prix inchangé depuis la mise en ligne, il y a 24 jours.",
+   vues:1284,favs:96,visites:8},
   {id:"s2",kind:"haussmann",titre:"Trois pièces avec balcon filant, étage élevé",ville:"Montpellier",quartier:"Boutonnet",prix:296000,m2:74,pieces:3,ch:2,dpe:"D",
    desc:"Quatrième étage avec ascenseur, parquet point de Hongrie, moulures et cheminée conservées. Balcon sur rue calme, cave et local vélo. Copropriété de douze lots, sans procédure en cours.",
-   vendeur:{nom:"Idriss M.",note:4.7,avis:8,delai:"répond en ~3 h"},vues:2107,favs:184,visites:14},
+   vendeur:{nom:"Idriss M.",delai:"~3 h",depuis:"janvier 2026"},
+   verif:["identite","propriete","diagnostics","copro"],
+   repond:"92 %",honorees:"13 / 14",conforme:{oui:9,total:11},
+   histo:"Baissé de 14 000 € le 12 août, après trois semaines en ligne.",
+   vues:2107,favs:184,visites:14},
   {id:"s3",kind:"villa",titre:"Villa d'architecte, piscine et oliviers",ville:"Aix-en-Provence",quartier:"Puyricard",prix:845000,m2:198,pieces:6,ch:4,dpe:"B",
    desc:"Construction de 2019 sur un terrain de 1 400 m². Grande baie coulissante plein sud, piscine chauffée au sel, garage double. Panneaux photovoltaïques posés en 2023, facture d'électricité quasi nulle.",
-   vendeur:{nom:"Hélène et Marc",note:5.0,avis:5,delai:"répond en ~30 min"},vues:3418,favs:412,visites:21},
+   vendeur:{nom:"Hélène et Marc",delai:"~30 min",depuis:"février 2026"},
+   verif:["identite","propriete","diagnostics","carrez"],
+   repond:"100 %",honorees:"21 / 21",conforme:{oui:18,total:19},
+   histo:"Prix inchangé depuis la mise en ligne, il y a 41 jours.",
+   vues:3418,favs:412,visites:21},
   {id:"s4",kind:"loft",titre:"Ancien atelier de menuiserie transformé en loft",ville:"Marseille",quartier:"La Belle de Mai",prix:342000,m2:118,pieces:3,ch:2,dpe:"D",
    desc:"Volume de 4,20 m sous plafond, verrière d'atelier conservée, mezzanine en acier brut. Deux chambres closes, une salle d'eau refaite. Idéal pour un usage mixte habitation et bureau.",
-   vendeur:{nom:"Sofia B.",note:4.8,avis:17,delai:"répond en ~2 h"},vues:1876,favs:231,visites:11},
+   vendeur:{nom:"Sofia B.",delai:"~2 h",depuis:"novembre 2025"},
+   verif:["identite","propriete","diagnostics"],
+   repond:"96 %",honorees:"11 / 12",conforme:{oui:10,total:10},
+   histo:"Prix inchangé depuis la mise en ligne, il y a 18 jours.",
+   vues:1876,favs:231,visites:11},
   {id:"s5",kind:"ferme",titre:"Mas provençal sur 8 000 m², dépendances",ville:"Arles",quartier:"Route de Fontvieille",prix:615000,m2:265,pieces:8,ch:5,dpe:"E",
    desc:"Mas du XVIIIᵉ dans son jus mais sain : toiture refaite en 2018, réseaux à reprendre. Deux dépendances de 40 m² à réhabiliter, forage et puits. Le genre de bien qui demande un projet.",
-   vendeur:{nom:"Bernard T.",note:4.6,avis:9,delai:"répond en ~5 h"},vues:942,favs:88,visites:6},
+   vendeur:{nom:"Bernard T.",delai:"~5 h",depuis:"septembre 2025"},
+   verif:["identite","propriete"],
+   repond:"81 %",honorees:"5 / 6",conforme:{oui:4,total:6},
+   histo:"Baissé de 35 000 € le 3 août, après deux mois en ligne.",
+   vues:942,favs:88,visites:6},
   {id:"s6",kind:"appart",titre:"Deux pièces neuf avec loggia, dernier étage",ville:"Nîmes",quartier:"Jean Jaurès",prix:178000,m2:48,pieces:2,ch:1,dpe:"A",
-   desc:"Livré en 2023, jamais habité. Loggia de 9 m² sans vis-à-vis, place de parking en sous-sol incluse. Chauffage collectif performant, charges de 62 € par mois.",
-   vendeur:{nom:"Léa P.",note:4.9,avis:6,delai:"répond en ~1 h"},vues:1533,favs:147,visites:9}
+   desc:"Livré en 2023, jamais habité. Loggia de 9 m² sans vis-à-vis, place de parking en sous-sol incluse. Chauffage collectif performant, charges de 62 € par mois.",
+   vendeur:{nom:"Léa P.",delai:"~1 h",depuis:"avril 2026"},
+   verif:["identite","propriete","diagnostics","carrez","copro"],
+   repond:"100 %",honorees:"9 / 9",conforme:{oui:8,total:9},
+   histo:"Prix inchangé depuis la mise en ligne, il y a 9 jours.",
+   vues:1533,favs:147,visites:9}
 ];
 
 /* ============================================================
@@ -1141,7 +1205,9 @@ const I = {
   check:'<path d="M20 6 9 17l-5-5"/>',
   spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
   eye:'<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/>',
-  box:'<path d="M3.5 8.5 12 4l8.5 4.5v7L12 20l-8.5-4.5z"/><path d="M3.5 8.5 12 13l8.5-4.5M12 13v7"/>'
+  box:'<path d="M3.5 8.5 12 4l8.5 4.5v7L12 20l-8.5-4.5z"/><path d="M3.5 8.5 12 13l8.5-4.5M12 13v7"/>',
+  shield:'<path d="M12 3l7.5 3v5.5c0 4.4-3 8.2-7.5 9.5-4.5-1.3-7.5-5.1-7.5-9.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/>',
+  tag:'<path d="M3.5 11.2V4.5a1 1 0 0 1 1-1h6.7a1 1 0 0 1 .7.3l8.1 8.1a1 1 0 0 1 0 1.4l-6.7 6.7a1 1 0 0 1-1.4 0L3.8 11.9a1 1 0 0 1-.3-.7z"/><circle cx="8" cy="8" r="1.4"/>'
 };
 const svg = (p,cls="")=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
 
@@ -1222,6 +1288,29 @@ function viewFavs(){
   </div>`;
 }
 
+/* Ce que la plateforme sait, par opposition à ce que les gens racontent :
+   des faits contrôlés à la publication et des comportements mesurés.
+   Rien ici ne peut être écrit par un acheteur dont l'offre a été refusée. */
+function trustHTML(l){
+  const verif = (l.verif||[]).map(k=>VERIF[k]).filter(Boolean);
+  const c = l.conforme;
+  return `<div class="trust">
+    <div class="trust-head">${svg(I.shield)}Ce que nous avons vérifié</div>
+    ${verif.length ? `<div class="facts">${verif.map(f=>
+      `<span class="fact">${svg(I.check)}${esc(f)}</span>`).join("")}</div>` : ""}
+    <div class="measures">
+      <span><b>${esc(l.vendeur.delai)}</b>délai de réponse</span>
+      <span><b>${esc(l.repond||"—")}</b>taux de réponse</span>
+      <span><b>${esc(l.honorees||"—")}</b>visites honorées</span>
+    </div>
+    ${c && c.total >= 3
+      ? `<p class="conform">${svg(I.eye)}<span><b>${c.oui} visiteurs sur ${c.total}</b> ont confirmé que le bien correspondait à l'annonce.</span></p>`
+      : `<p class="conform muted">${svg(I.eye)}<span>Pas encore assez de visites pour publier un taux de conformité.</span></p>`}
+    ${l.histo ? `<p class="histo">${svg(I.tag)}<span>${esc(l.histo)}</span></p>` : ""}
+    <p class="no-rating">Nous ne notons pas les vendeurs. Refuser une offre n'est pas un défaut&nbsp;: seuls comptent des faits vérifiables et l'exactitude de l'annonce.</p>
+  </div>`;
+}
+
 function viewDetail(){
   const l = byId(state.current) || listings()[0];
   if(!l) return `<div class="empty">${svg(I.box)}<b>Annonce introuvable</b></div>`;
@@ -1252,14 +1341,11 @@ function viewDetail(){
         <span class="avatar" style="background:${teinte(v.nom)}">${initiales(v.nom)}</span>
         <span class="seller-info">
           <b>${esc(v.nom)}</b>
-          <span class="stars">${svg('<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/>')}${v.note.toFixed(1)} · ${v.avis} avis · ${esc(v.delai)}</span>
+          <span class="seller-sub">Membre depuis ${esc(v.depuis)} · répond en ${esc(v.delai)}</span>
         </span>
         <span class="badge-verif">${svg(I.check)}Vérifié</span>
       </div>
-      <div class="review">
-        <div class="review-head"><span>Ce que disent les visiteurs</span><span class="stars">${svg('<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/>')}${v.note.toFixed(1)}</span></div>
-        <p>« Annonce parfaitement fidèle, aucune mauvaise surprise à la visite. ${esc(v.nom.split(" ")[0])} avait préparé les diagnostics et le règlement de copropriété. »</p>
-      </div>
+      ${trustHTML(l)}
       <div class="cta-row">
         <button class="btn-app btn-primary" data-msg="${l.id}">${svg(I.chat)}Contacter</button>
         <button class="btn-app btn-outline" data-visite="${l.id}">${svg(I.cal)}Visiter</button>
@@ -1701,7 +1787,10 @@ function publish(){
     prix, m2:Math.round(m2), pieces:d.pieces, ch:d.ch, dpe:d.dpe,
     desc:d.desc.trim() || "Le propriétaire n'a pas encore rédigé de description. Contactez-le directement, il répond vite.",
     photos:d.photos.slice(),
-    vendeur:{nom:"Romain B.",note:5.0,avis:0,delai:"répond en ~1 h"},
+    vendeur:{nom:"Romain B.",delai:"~1 h",depuis:"aujourd'hui"},
+    verif:["identite","propriete"],
+    repond:"—", honorees:"0 / 0", conforme:null,
+    histo:"Mise en ligne aujourd'hui, prix d'origine.",
     vues:0, favs:0, visites:0
   });
   save();

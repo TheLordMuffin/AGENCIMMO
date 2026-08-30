@@ -1,14 +1,18 @@
 #!/bin/sh
-# Enveloppe les sources dans des documents HTML autonomes.
+# Produit les fichiers publiables à partir des sources.
+#
+#   showcase.html  source unique : le moteur de l'app + le pitch
+#        └─ tools/make-app.py ─→ app.html   (l'app seule, dans son châssis)
+#
+#   app.html      ─→ index.html   servi à la racine par GitHub Pages
+#   showcase.html ─→ pitch.html   la présentation du projet
 #
 # app.html et showcase.html sont écrits sans <!doctype> ni <html> : c'est le
 # format attendu par l'outil Artifact, qui fournit lui-même l'enveloppe.
-# GitHub Pages, lui, sert les fichiers tels quels — il lui faut un document
-# complet.
-#
-#   index.html  ← l'application
-#   pitch.html  ← la page de présentation du projet
+# GitHub Pages sert les fichiers tels quels et réclame un document complet.
 set -eu
+
+python3 tools/make-app.py
 
 envelopper() {
   source_html=$1; sortie=$2; titre=$3

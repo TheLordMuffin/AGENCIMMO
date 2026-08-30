@@ -1,9 +1,9 @@
 # AGENCIMMO
 
 Marketplace immobilière entre particuliers : le vendeur dépose son bien,
-l'acheteur le contacte directement. La légèreté de Vinted, la confiance de
-TripAdvisor — profils vérifiés, avis publics des deux côtés, commission
-plafonnée à 990 € au lieu des ~4,5 % d'une agence.
+l'acheteur le contacte directement. La légèreté de Vinted, une commission
+plafonnée à 990 € au lieu des ~4,5 % d'une agence, et un modèle de confiance
+fondé sur des faits vérifiés plutôt que sur des notes.
 
 Ce dépôt contient **un prototype de démonstration** : l'application, plus
 une page de présentation du projet. Il n'y a ni serveur, ni compte, ni
@@ -14,10 +14,14 @@ donnée envoyée nulle part — tout se passe dans le navigateur.
 Deux sources, écrites sans `<!doctype>` ni `<html>` — c'est le format
 attendu par l'outil Artifact, qui fournit lui-même l'enveloppe :
 
-- `app.html` — **l'application**. Plein écran sur téléphone, encadrée comme
-  un appareil sur ordinateur. C'est le livrable principal.
-- `showcase.html` — la page de présentation : l'app en maquette, puis le
-  pitch (problème, parcours vendeur, confiance, modèle, marché).
+- `showcase.html` — **la source unique**. Elle contient le moteur de l'app
+  (illustrations, données, vues, assistant de dépôt, contrôleur) et le pitch
+  qui l'entoure.
+- `app.html` — **l'application seule**, plein écran. **Générée** par
+  `tools/make-app.py`, qui extrait le moteur de `showcase.html` et l'habille
+  du châssis rangé dans `tools/`. Ne pas l'éditer à la main : toute
+  modification du moteur se fait dans `showcase.html`, sans quoi les deux
+  fichiers divergent.
 
 Et deux fichiers **générés**, à ne jamais modifier à la main :
 
@@ -34,6 +38,34 @@ Aucune dépendance, aucune étape de compilation. Les seules ressources
 externes sont les polices Google Fonts (Fraunces, Instrument Sans, IBM Plex
 Mono). Les visuels de biens sont des élévations d'architecture dessinées en
 SVG à la volée : aucune image n'est chargée.
+
+## Note de conception : pourquoi aucune note sur les vendeurs
+
+La première version notait les vendeurs par étoiles, façon TripAdvisor. C'est
+une erreur, et elle a été retirée.
+
+Un bien se vend à un seul acheteur. Sur vingt visiteurs, dix-neuf repartent
+sans rien. Noter le vendeur revient à le sanctionner pour le seul choix qu'il
+pouvait faire — et ouvre la porte aux représailles d'une offre refusée, voire
+au chantage à l'étoile pendant la négociation. Le déséquilibre aggrave le
+tout : un hôte reçoit deux cents voyageurs et un mauvais avis se dilue ; un
+vendeur vend une fois, un seul avis vengeur le suit définitivement.
+
+Ce qui est publié à la place :
+
+- **des faits contrôlés avant publication** — identité, titre de propriété,
+  diagnostics, surface certifiée, documents de copropriété ;
+- **des comportements mesurés par la plateforme** — délai et taux de réponse,
+  visites honorées, historique de prix. Des horodatages, pas des opinions ;
+- **une seule question fermée**, posée après une visite réellement effectuée :
+  le bien correspondait-il à l'annonce ? Publiée en agrégé seulement, à partir
+  de trois réponses. On évalue l'exactitude de l'annonce, jamais la personne.
+
+À vérifier avant toute mise en production : la publication d'avis en ligne est
+encadrée en France (obligation de transparence sur la vérification et la
+modération), et tout contenu rédigé par un utilisateur expose à un risque
+diffamatoire. Des badges factuels et des mesures automatiques évitent
+largement ce terrain.
 
 ## Ce qui fonctionne vraiment
 
