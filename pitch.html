@@ -1,26 +1,23 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="AGENCIMMO — vendez votre bien sans commission d'agence."><style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>AGENCIMMO</title>
-<meta name="theme-color" content="#0F231B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="AGENCIMMO">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="AGENCIMMO — le projet : marketplace immobiliere entre particuliers."><style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>AGENCIMMO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 
 <style>
 /* ============================================================
-   AGENCIMMO — l'application.
-   Plein écran sur téléphone, encadrée sur grand écran.
-   Univers visuel unique et assumé : toutes les couleurs sont
-   peintes explicitement, aucune ne dépend du thème de l'hôte.
+   AGENCIMMO — vitrine projet
+   Palette « clé en laiton & pin » : volontairement à l'écart du
+   bleu proptech. Monde visuel unique, assumé, peint explicitement.
    ============================================================ */
 :root{
   --ink:#08130F;
   --pine-950:#0B1913;
   --pine-900:#0F231B;
   --pine-800:#153125;
+  --pine-700:#1D4131;
+  --pine-600:#26543F;
   --pine:#0E5C43;
+  --pine-bright:#12775A;
   --brass:#C89A47;
   --brass-bright:#E3B95F;
   --brass-dim:#8E6D31;
@@ -30,56 +27,147 @@
   --chalk:#FBFCF9;
   --on-dark:#E9EFE6;
   --on-dark-mute:#9BB0A3;
+  --on-dark-faint:#6C8377;
   --on-light:#0F1F18;
   --on-light-mute:#55685D;
   --rust:#B4523A;
-  --line-light:rgba(15,35,27,.13);
   --line-dark:rgba(200,154,71,.20);
+  --line-light:rgba(15,35,27,.13);
 
   --f-display:"Fraunces","Iowan Old Style",Georgia,serif;
   --f-sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+
+  --wrap:1180px;
+  --r-s:10px; --r-m:16px; --r-l:26px;
 }
 *,*::before,*::after{box-sizing:border-box}
-html,body{height:100%}
 body{
   margin:0;
+  background:var(--pine-900);
+  color:var(--on-dark);
   font-family:var(--f-sans);
-  background:var(--pine-950);
-  color:var(--on-light);
+  font-size:16px;
+  line-height:1.6;
   -webkit-font-smoothing:antialiased;
-  overscroll-behavior:none;
+  overflow-x:hidden;
 }
 img{max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brass-bright);outline-offset:3px;border-radius:4px}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-:focus-visible{outline:2px solid var(--pine);outline-offset:2px;border-radius:6px}
 
-/* ---------- châssis ---------- */
-.shell{min-height:100dvh;display:grid;place-items:center;padding:0}
-.app{
+.wrap{width:100%;max-width:var(--wrap);margin-inline:auto;padding-inline:24px}
+.wrap-narrow{width:100%;max-width:820px;margin-inline:auto;padding-inline:24px}
+
+/* ---------- voix typographiques ---------- */
+.eyebrow{
+  font-family:var(--f-mono);
+  font-size:11px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--brass);
+  display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:"";width:24px;height:1px;background:var(--brass);flex:none}
+.eyebrow.on-light{color:var(--pine)}
+.eyebrow.on-light::before{background:var(--pine)}
+
+h1,h2,h3{font-family:var(--f-display);font-weight:500;text-wrap:balance;margin:0;line-height:1.04;letter-spacing:-.02em}
+h1{font-size:clamp(2.9rem,7.2vw,5.4rem);font-variation-settings:"SOFT" 40,"WONK" 1,"opsz" 110}
+h2{font-size:clamp(2rem,4.4vw,3.3rem);font-variation-settings:"SOFT" 30,"WONK" 1,"opsz" 90}
+h3{font-size:clamp(1.15rem,2vw,1.45rem);font-variation-settings:"SOFT" 20,"opsz" 40;letter-spacing:-.01em}
+p{margin:0}
+.lede{font-size:clamp(1.05rem,1.7vw,1.28rem);line-height:1.62;color:var(--on-dark-mute);max-width:62ch}
+.lede.on-light{color:var(--on-light-mute)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+/* ---------- sections ---------- */
+section{position:relative}
+.band-dark{background:var(--pine-900);color:var(--on-dark)}
+.band-deep{background:var(--pine-950);color:var(--on-dark)}
+.band-light{background:var(--paper);color:var(--on-light)}
+.band-light .lede{color:var(--on-light-mute)}
+.pad{padding-block:clamp(72px,10vw,132px)}
+.pad-s{padding-block:clamp(52px,7vw,86px)}
+.sec-head{display:flex;flex-direction:column;gap:18px;margin-bottom:clamp(38px,5vw,64px)}
+.rule{height:1px;background:var(--line-dark);border:0;margin:0}
+.band-light .rule{background:var(--line-light)}
+
+/* ============================ HÉRO ============================ */
+.hero{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 78% 8%, rgba(200,154,71,.16) 0%, rgba(200,154,71,0) 58%),
+    radial-gradient(90% 70% at 8% 100%, rgba(18,119,90,.28) 0%, rgba(18,119,90,0) 60%),
+    var(--pine-950);
+  padding-block:clamp(56px,7vw,84px) 0;
+}
+.hero-grid{
+  display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);
+  gap:clamp(28px,4vw,64px);align-items:center;
+}
+.hero-copy{display:flex;flex-direction:column;gap:26px;padding-block:clamp(20px,4vw,56px)}
+h1 em{font-style:italic;color:var(--brass-bright);font-variation-settings:"SOFT" 60,"WONK" 1,"opsz" 130}
+.hero-stats{display:flex;flex-wrap:wrap;gap:10px}
+.chip-stat{
+  display:flex;align-items:baseline;gap:9px;
+  border:1px solid var(--line-dark);border-radius:999px;
+  padding:9px 16px 9px 14px;background:rgba(200,154,71,.05);
+}
+.chip-stat b{font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--brass-bright);font-variant-numeric:tabular-nums}
+.chip-stat span{font-size:12.5px;color:var(--on-dark-mute);letter-spacing:.01em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 22px;border-radius:999px;
+  font-weight:600;font-size:14.5px;letter-spacing:.01em;
+  transition:transform .18s cubic-bezier(.2,.8,.3,1),background .18s,box-shadow .18s;
+  text-decoration:none;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-brass{background:var(--brass);color:var(--ink);box-shadow:0 8px 24px -10px rgba(200,154,71,.75)}
+.btn-brass:hover{background:var(--brass-bright)}
+.btn-ghost{border:1px solid var(--line-dark);color:var(--on-dark)}
+.btn-ghost:hover{border-color:var(--brass);background:rgba(200,154,71,.08)}
+.hero-note{font-family:var(--f-mono);font-size:11.5px;color:var(--on-dark-faint);letter-spacing:.03em}
+
+.hero-stage{position:relative;display:flex;justify-content:center;align-items:flex-end;min-height:520px}
+.hero-glow{
+  position:absolute;inset:auto 0 -6% 0;height:78%;
+  background:radial-gradient(60% 60% at 50% 60%, rgba(200,154,71,.20), rgba(200,154,71,0) 70%);
+  filter:blur(6px);pointer-events:none;
+}
+
+/* ============================ TÉLÉPHONE ============================ */
+.phone{
+  position:relative;width:344px;max-width:100%;flex:none;
+  border-radius:46px;padding:11px;
+  background:linear-gradient(160deg,#26302B 0%,#0D1512 42%,#212B26 100%);
+  box-shadow:
+    0 2px 0 rgba(255,255,255,.10) inset,
+    0 44px 90px -30px rgba(0,0,0,.85),
+    0 0 0 1px rgba(255,255,255,.05);
+}
+.phone::after{
+  content:"";position:absolute;left:50%;top:5px;transform:translateX(-50%);
+  width:118px;height:5px;border-radius:99px;background:rgba(255,255,255,.13);
+}
+.screen{
   position:relative;
-  width:100%;max-width:440px;
-  height:100dvh;max-height:940px;
-  display:flex;flex-direction:column;
+  height:712px;border-radius:36px;overflow:hidden;
   background:var(--chalk);color:var(--on-light);
-  overflow:hidden;isolation:isolate;
+  display:flex;flex-direction:column;
+  isolation:isolate;
 }
-/* Sur grand écran, l'app est présentée comme un appareil ; sur téléphone
-   elle occupe tout, sans cadre ni ombre. */
-@media (min-width:521px){
-  .shell{padding:24px;background:
-    radial-gradient(120% 90% at 70% 0%, rgba(200,154,71,.10), transparent 60%),
-    var(--pine-950);}
-  .app{border-radius:34px;box-shadow:0 40px 90px -40px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.06)}
+.statusbar{
+  flex:none;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 22px 4px;font-family:var(--f-mono);font-size:11.5px;font-weight:600;
+  color:var(--on-light);letter-spacing:.02em;
 }
-/* ---------- réinitialisation de la démo ---------- */
-.reset{
-  margin-top:4px;align-self:flex-start;
-  font-family:var(--f-mono);font-size:11px;letter-spacing:.03em;
-  color:var(--on-light-mute);text-decoration:underline;
-  text-underline-offset:3px;padding:6px 0;
-}
-.reset:hover{color:var(--rust)}
+.statusbar .sb-icons{display:flex;gap:5px;align-items:center}
+.sb-bar{width:3px;border-radius:1px;background:currentColor}
+.notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:82px;height:22px;border-radius:99px;background:#0D1512;z-index:6}
+
 /* corps scrollable de l'écran */
 .views{position:relative;flex:1;overflow:hidden}
 .view{
@@ -431,99 +519,373 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .toast.on{transform:none}
 .toast svg{width:17px;height:17px;stroke:var(--brass);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
-/* ============================================================
-   Passage de la maquette (344 px) à un vrai téléphone.
-   Ces règles viennent après le CSS de l'app et l'emportent.
-   ============================================================ */
+/* ============================ SECTION PRODUIT ============================ */
+.product-grid{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:clamp(32px,5vw,80px);align-items:start;
+}
+.feature-list{display:flex;flex-direction:column;gap:8px;margin-top:26px}
+.feature{
+  display:flex;gap:16px;align-items:flex-start;
+  padding:16px 18px;border-radius:16px;
+  border:1px solid transparent;background:transparent;
+  text-align:left;width:100%;
+  transition:background .2s,border-color .2s;
+}
+.feature:hover{background:rgba(200,154,71,.05);border-color:var(--line-dark)}
+.feature.on{background:rgba(200,154,71,.09);border-color:rgba(200,154,71,.34)}
+.feature-idx{
+  font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.06em;
+  color:var(--brass);flex:none;padding-top:4px;width:26px;
+}
+.feature-txt b{display:block;font-family:var(--f-display);font-size:17px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px;font-variation-settings:"SOFT" 20}
+.feature-txt p{font-size:13.5px;color:var(--on-dark-mute);line-height:1.55;max-width:44ch}
+.phone-col{position:sticky;top:32px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.phone-hint{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--on-dark-faint);display:flex;align-items:center;gap:8px;
+}
+.phone-hint svg{width:14px;height:14px;stroke:var(--brass);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* Encoche, Dynamic Island, barre d'accueil : on réserve la place. */
-.app-head{padding:calc(12px + env(safe-area-inset-top,0px)) 20px 14px}
-.chat-head{padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px}
-.detail-back,.detail-hero .heart{top:calc(12px + env(safe-area-inset-top,0px))}
-.tabbar{padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px))}
-/* au-dessus de la barre d'onglets, jamais par-dessus */
-.toast{left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));font-size:13.5px}
+/* ============================ PITCH ============================ */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,4.5vw,70px);align-items:start}
+.cols-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2vw,26px)}
+.cols-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,26px)}
 
-/* Sous 16 px, iOS zoome automatiquement à la mise au point d'un champ. */
-.field input,.field select,.field textarea,.searchbar input{font-size:16px}
-.field input,.field select,.field textarea{padding:12px 14px;border-radius:13px}
+.figure-block{display:flex;flex-direction:column;gap:6px;padding-block:6px}
+.figure-block b{font-family:var(--f-display);font-size:clamp(2.4rem,5vw,3.7rem);font-weight:600;letter-spacing:-.03em;line-height:.98;font-variation-settings:"SOFT" 20,"WONK" 1;color:var(--brass-bright)}
+.band-light .figure-block b{color:var(--pine)}
+.figure-block span{font-size:13.5px;color:var(--on-dark-mute);line-height:1.5;max-width:30ch}
+.band-light .figure-block span{color:var(--on-light-mute)}
 
-.brandmark b{font-size:21px}
-.icon-btn{width:38px;height:38px}
-.icon-btn svg{width:21px;height:21px}
-.searchbar{padding:13px 15px;border-radius:15px}
-.chips{padding:0 20px 14px;gap:8px}
-.chip{padding:9px 15px;font-size:13px}
-.sec-label{padding:4px 20px 12px}
-.sec-label b{font-size:17px}
+.panel{
+  border:1px solid var(--line-dark);border-radius:var(--r-l);
+  padding:clamp(20px,2.4vw,30px);
+  display:flex;flex-direction:column;gap:12px;
+  background:rgba(200,154,71,.035);
+}
+.band-light .panel{border-color:var(--line-light);background:rgba(255,255,255,.55)}
+.panel h3{margin-bottom:2px}
+.panel p{font-size:14px;color:var(--on-dark-mute);line-height:1.6}
+.band-light .panel p{color:var(--on-light-mute)}
+.panel .price-tag{font-family:var(--f-mono);font-size:14px;font-weight:600;color:var(--brass)}
+.band-light .panel .price-tag{color:var(--pine)}
 
-.cards{gap:18px;padding:0 20px}
-.card{border-radius:20px}
-.card-body{padding:14px 15px 16px;gap:8px}
-.card-price b{font-size:19px}
-.card-price i{font-size:11.5px}
-.card-title{font-size:15px}
-.card-meta{font-size:12.5px}
-.saving{font-size:11.5px;padding:6px 10px}
-.tag{font-size:10px;padding:6px 10px}
-.heart{width:36px;height:36px;border-radius:12px}
-.heart svg{width:19px;height:19px}
+/* étapes — séquence réelle, donc numérotées */
+.steps-list{display:flex;flex-direction:column}
+.step-row{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(18px,3vw,38px);
+  padding-block:clamp(22px,3vw,34px);
+  border-top:1px solid var(--line-light);
+}
+.step-row:last-child{border-bottom:1px solid var(--line-light)}
+.step-n{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.1em;
+  color:var(--pine);padding-top:7px;
+}
+.step-c h3{margin-bottom:8px}
+.step-c p{font-size:14.5px;color:var(--on-light-mute);line-height:1.62;max-width:56ch}
 
-.tab{font-size:10.5px;gap:5px}
-.tab svg{width:23px;height:23px}
-.tab-fab .fab{width:44px;height:44px;border-radius:15px}
-.tab-fab .fab svg{width:22px;height:22px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-light);border-radius:var(--r-l);overflow:hidden;border:1px solid var(--line-light)}
+.compare>div{background:var(--paper);padding:clamp(20px,2.4vw,30px);display:flex;flex-direction:column;gap:14px}
+.compare>div.us{background:var(--pine-900);color:var(--on-dark)}
+.compare h4{margin:0;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--on-light-mute)}
+.compare>div.us h4{color:var(--brass)}
+.compare .big{font-family:var(--f-display);font-size:clamp(2rem,4vw,3rem);font-weight:600;letter-spacing:-.03em;line-height:1}
+.compare li{font-size:13.5px;line-height:1.5;color:var(--on-light-mute);display:flex;gap:9px;align-items:flex-start}
+.compare>div.us li{color:var(--on-dark-mute)}
+.compare ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.compare li::before{content:"—";color:var(--rust);flex:none;font-family:var(--f-mono)}
+.compare>div.us li::before{content:"+";color:var(--brass)}
 
-.detail-body{padding:18px 20px 24px;gap:18px}
-.detail-price b{font-size:29px}
-.prose{font-size:14px}
-.spec b{font-size:14px}
-.spec span{font-size:10.5px}
-.btn-app{padding:15px;font-size:14.5px;border-radius:15px}
-.cta-row{padding-bottom:2px}
+.roadmap{display:flex;flex-direction:column;gap:0}
+.rm-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:clamp(14px,2.4vw,30px);padding-block:20px;border-top:1px solid var(--line-dark);align-items:baseline}
+.rm-row:last-child{border-bottom:1px solid var(--line-dark)}
+.rm-when{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--brass)}
+.rm-what b{display:block;font-family:var(--f-display);font-size:18px;font-weight:600;letter-spacing:-.01em;margin-bottom:5px}
+.rm-what p{font-size:13.5px;color:var(--on-dark-mute);line-height:1.55;max-width:56ch}
 
-.wizard{padding:8px 20px 24px;gap:18px}
-.step-title b{font-size:23px}
-.step-title p{font-size:13.5px}
-.field label{font-size:12.5px}
-.pick{padding:10px 14px;font-size:13px}
-.estim b{font-size:22px}
-.recap-row{padding:12px 14px;font-size:13.5px}
-.success h4{font-size:25px}
-.success p{font-size:14px}
+.ask-list{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.ask{display:flex;gap:13px;align-items:flex-start;font-size:14.5px;line-height:1.55;color:var(--on-dark-mute)}
+.ask-mark{flex:none;width:22px;height:22px;border-radius:7px;background:rgba(200,154,71,.15);color:var(--brass);display:grid;place-items:center;margin-top:2px}
+.ask-mark svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ask b{color:var(--on-dark);font-weight:600}
 
-.threads{padding:4px 0 12px}
-.thread{padding:12px 20px}
-.thread-top b{font-size:14px}
-.thread p{font-size:12.5px}
-.bubble{font-size:14px;padding:11px 14px}
-.chat-input{padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px))}
+.footnote{
+  font-family:var(--f-mono);font-size:11px;line-height:1.6;color:var(--on-dark-faint);
+  border-left:2px solid var(--line-dark);padding-left:14px;max-width:70ch;
+}
+.band-light .footnote{color:var(--on-light-mute);border-color:var(--line-light)}
 
-.profile{padding:10px 20px 24px;gap:18px}
-.profile-head b{font-size:21px}
-.econo b{font-size:30px}
-.econo p{font-size:12.5px}
-.kpi b{font-size:19px}
-.kpi span{font-size:10.5px}
-.mini-main b{font-size:13.5px}
-.empty{padding:44px 26px}
-.empty p{font-size:13.5px}
+footer{background:var(--ink);color:var(--on-dark-mute);padding-block:44px;font-size:13px}
+.foot-row{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
+.foot-brand{display:flex;align-items:center;gap:10px;color:var(--on-dark)}
+.foot-brand b{font-family:var(--f-display);font-size:18px;font-weight:600;letter-spacing:-.02em}
 
-/* Le fil est plus aéré sur les grands téléphones. */
-@media (min-height:800px){
-  .cards{gap:20px}
+/* ---------- révélation au défilement ---------- */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.3,1)}
+.rv.in{opacity:1;transform:none}
+.rv-1{transition-delay:.07s}.rv-2{transition-delay:.14s}.rv-3{transition-delay:.21s}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-stage{min-height:auto;padding-top:14px}
+  .product-grid{grid-template-columns:1fr}
+  .phone-col{position:static;order:-1}
+  .split,.cols-3,.cols-2{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .rm-row{grid-template-columns:1fr;gap:6px}
+}
+@media (max-width:420px){
+  .wrap,.wrap-narrow{padding-inline:18px}
+  .phone{width:100%;padding:8px;border-radius:38px}
+  .screen{height:640px;border-radius:31px}
+  .step-row{grid-template-columns:1fr;gap:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;transition-duration:.001ms !important}
+  .rv{opacity:1;transform:none}
 }
 </style>
 
-<div class="shell">
-  <div class="app">
-    <div class="views" id="views"></div>
-    <nav class="tabbar" id="tabbar"></nav>
-    <div class="toast" id="toast">
-      <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span id="toastMsg"></span>
+<!-- ======================= HÉRO ======================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Projet — marketplace immobilière entre particuliers</p>
+      <h1>Vendre son bien ne devrait pas coûter <em>le prix d'une voiture.</em></h1>
+      <p class="lede">AGENCIMMO met le vendeur et l'acheteur en relation directe, avec la légèreté de Vinted et la confiance de TripAdvisor&nbsp;: profils vérifiés, avis publics, accompagnement à la carte. La commission d'agence devient un choix, plus une fatalité.</p>
+      <div class="hero-stats">
+        <span class="chip-stat"><b>10 800 €</b><span>commission d'agence moyenne</span></span>
+        <span class="chip-stat"><b>0 €</b><span>pour déposer une annonce</span></span>
+        <span class="chip-stat"><b>990 €</b><span>notre plafond, à la signature</span></span>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-brass" href="#produit">
+          Voir le produit
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#projet">Le projet en 4 minutes</a>
+      </div>
+      <p class="hero-note">Prototype cliquable — les écrans ci-dessous fonctionnent vraiment.</p>
+    </div>
+
+    <div class="hero-stage">
+      <div class="hero-glow"></div>
+      <div id="heroCollage" style="position:relative;width:100%;max-width:430px;padding-block:20px 40px"></div>
     </div>
   </div>
-</div>
+</section>
+
+<!-- ======================= PRODUIT ======================= -->
+<section class="band-dark pad" id="produit">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow">Le produit</p>
+      <h2>Une app qu'on prend en main sans mode d'emploi.</h2>
+      <p class="lede">Cinq écrans, aucun jargon. Touchez le téléphone&nbsp;: tout est cliquable, y compris le dépôt d'annonce — allez au bout, votre bien apparaîtra vraiment dans le fil.</p>
+    </div>
+
+    <div class="product-grid">
+      <div>
+        <div class="feature-list" id="featureList">
+          <button class="feature on" data-goto="feed">
+            <span class="feature-idx">FIL</span>
+            <span class="feature-txt"><b>Un fil, pas un moteur de recherche</b><p>On ouvre l'app et on voit des biens, tout de suite. Les filtres sont là si on les cherche — jamais devant la porte.</p></span>
+          </button>
+          <button class="feature" data-goto="detail">
+            <span class="feature-idx">FICHE</span>
+            <span class="feature-txt"><b>La fiche dit tout, y compris qui vend</b><p>Prix, surface, DPE, économie réalisée — et le vendeur avec sa note, ses avis et son délai de réponse. La confiance se lit en trois secondes.</p></span>
+          </button>
+          <button class="feature" data-goto="publish">
+            <span class="feature-idx">DÉPÔT</span>
+            <span class="feature-txt"><b>Déposer en trois minutes, gratuitement</b><p>Photos, quelques champs, et une estimation automatique qui propose un prix cohérent avec le quartier. Essayez&nbsp;: le formulaire marche pour de vrai.</p></span>
+          </button>
+          <button class="feature" data-goto="chat">
+            <span class="feature-idx">CHAT</span>
+            <span class="feature-txt"><b>La visite se cale dans la conversation</b><p>Pas de formulaire de contact qui part dans le vide. On discute, on propose un créneau, on confirme. Comme sur Vinted.</p></span>
+          </button>
+          <button class="feature" data-goto="profile">
+            <span class="feature-idx">SUIVI</span>
+            <span class="feature-txt"><b>Le vendeur voit ce qu'il économise</b><p>Vues, favoris, demandes de visite — et le montant qu'il n'a pas versé à une agence. C'est ce chiffre qui le fait rester.</p></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="phone-col">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="screen">
+            <div class="statusbar">
+              <span id="clock">9:41</span>
+              <span class="sb-icons" aria-hidden="true">
+                <i class="sb-bar" style="height:5px"></i><i class="sb-bar" style="height:7px"></i><i class="sb-bar" style="height:9px"></i><i class="sb-bar" style="height:11px"></i>
+                <svg width="15" height="11" viewBox="0 0 26 13" style="margin-left:4px"><rect x=".6" y=".6" width="21" height="11.8" rx="3.4" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="2.4" y="2.4" width="16" height="8.2" rx="2" fill="currentColor"/><path d="M23.4 4.4v4.2a2.6 2.6 0 0 0 0-4.2z" fill="currentColor" fill-opacity=".45"/></svg>
+              </span>
+            </div>
+            <div class="views" id="views"></div>
+            <nav class="tabbar" id="tabbar"></nav>
+            <div class="toast" id="toast"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span id="toastMsg"></span></div>
+          </div>
+        </div>
+        <p class="phone-hint">
+          <svg viewBox="0 0 24 24"><path d="M9 11V6a2 2 0 1 1 4 0v5m0-2a2 2 0 1 1 4 0v2m0-1a2 2 0 1 1 4 0v6a6 6 0 0 1-6 6h-2a7 7 0 0 1-7-7v-1a2 2 0 1 1 4 0"/></svg>
+          Prototype interactif — cliquez
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= PROBLÈME ======================= -->
+<section class="band-light pad" id="projet">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow on-light">Le problème</p>
+      <h2>On paie 10 000 € pour un service qu'on ne choisit pas.</h2>
+      <p class="lede">Une agence facture un pourcentage du prix du bien. Vendre un appartement à 400 000 € ne demande pourtant pas deux fois plus de travail qu'à 200 000 €. Le vendeur paie une proportion, pas une prestation.</p>
+    </div>
+    <div class="compare rv rv-1">
+      <div>
+        <h4>Aujourd'hui — via une agence</h4>
+        <p class="big" style="color:var(--rust)">10 800 €</p>
+        <ul>
+          <li>Mandat exclusif de 3 mois, souvent tacitement reconduit</li>
+          <li>Le vendeur ne sait pas combien de visites ont vraiment eu lieu</li>
+          <li>L'acheteur paie la commission dans le prix, sans jamais l'avoir négociée</li>
+          <li>Zéro avis public sur l'agent : sa réputation n'est nulle part</li>
+        </ul>
+      </div>
+      <div class="us">
+        <h4>Avec AGENCIMMO</h4>
+        <p class="big" style="color:var(--brass-bright)">0 à 990 €</p>
+        <ul>
+          <li>Dépôt gratuit, sans mandat, sans engagement de durée</li>
+          <li>Vues, favoris et demandes de visite visibles en direct</li>
+          <li>Services à la carte : photos, diagnostics, accompagnement juridique</li>
+          <li>Vendeurs et acheteurs notés publiquement, comme sur TripAdvisor</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= FONCTIONNEMENT ======================= -->
+<section class="band-light pad-s">
+  <div class="wrap-narrow">
+    <div class="sec-head rv">
+      <p class="eyebrow on-light">Le parcours vendeur</p>
+      <h2>Trois étapes, dans cet ordre.</h2>
+    </div>
+    <div class="steps-list">
+      <div class="step-row rv"><div class="step-n">01</div><div class="step-c"><h3>Il dépose son bien en trois minutes</h3><p>Photos depuis le téléphone, adresse, surface, nombre de pièces. L'estimation automatique propose une fourchette à partir des ventes récentes du secteur — le vendeur garde la main sur son prix, mais il n'est plus seul face à la page blanche.</p></div></div>
+      <div class="step-row rv"><div class="step-n">02</div><div class="step-c"><h3>Les acheteurs le contactent directement</h3><p>Aucun intermédiaire dans la conversation. L'acheteur pose ses questions, demande un créneau, la visite se cale dans le chat. Le vendeur voit qui a regardé, qui a mis en favori, qui est revenu trois fois.</p></div></div>
+      <div class="step-row rv"><div class="step-n">03</div><div class="step-c"><h3>Il ne paie qu'à la signature du compromis</h3><p>990 € plafonnés, quel que soit le prix du bien. S'il a besoin d'un diagnostic, d'un photographe ou d'un juriste, il les prend à la carte au moment où il en a besoin. S'il n'a besoin de rien, il ne paie rien de plus.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CONFIANCE ======================= -->
+<section class="band-dark pad">
+  <div class="wrap">
+    <div class="split">
+      <div class="sec-head rv" style="margin-bottom:0">
+        <p class="eyebrow">Notre différence</p>
+        <h2>Le particulier à particulier existe déjà. Ce qui manque, c'est la confiance.</h2>
+        <p class="lede">Sur les sites d'annonces actuels, on ne sait rien du vendeur d'en face. C'est exactement le problème que TripAdvisor a résolu pour les restaurants et Airbnb pour les logements : rendre la réputation visible, publique et cumulative.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel rv rv-1">
+          <h3>Identité vérifiée</h3>
+          <p>Pièce d'identité et titre de propriété contrôlés avant publication. Un badge que l'acheteur voit avant même d'ouvrir la fiche — et qui élimine les annonces fantômes.</p>
+        </div>
+        <div class="panel rv rv-2">
+          <h3>Avis publics des deux côtés</h3>
+          <p>L'acheteur note le vendeur sur la fiabilité de l'annonce et la qualité de la visite. Le vendeur note l'acheteur sur son sérieux. Les deux réputations se construisent, et se perdent.</p>
+        </div>
+        <div class="panel rv rv-3">
+          <h3>Délai de réponse affiché</h3>
+          <p>« Répond en 1 h » n'est pas un argument marketing, c'est une mesure. Elle pousse mécaniquement les vendeurs à répondre — et c'est là que se joue la conversion.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= MODÈLE ======================= -->
+<section class="band-light pad">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow on-light">Le modèle économique</p>
+      <h2>Gratuit pour entrer, payant pour aller plus vite.</h2>
+      <p class="lede">Le dépôt reste gratuit pour toujours : c'est ce qui remplit le catalogue, et le catalogue est ce qui attire les acheteurs. On monétise le confort et la réussite, pas l'accès.</p>
+    </div>
+    <div class="cols-3">
+      <div class="panel rv"><span class="price-tag">Gratuit</span><h3>Déposer et discuter</h3><p>Annonce illimitée, photos, messagerie, demandes de visite. Aucune carte bancaire demandée.</p></div>
+      <div class="panel rv rv-1"><span class="price-tag">39 € — 249 €</span><h3>Options à la carte</h3><p>Mise en avant dans le fil, reportage photo par un professionnel local, pack diagnostics, visite virtuelle. Le vendeur prend ce dont il a besoin.</p></div>
+      <div class="panel rv rv-2"><span class="price-tag">990 € plafonnés</span><h3>Commission de réussite</h3><p>Facturée uniquement à la signature du compromis. Le vendeur d'un bien à 500 000 € paie le même prix que celui d'un studio à 90 000 €.</p></div>
+    </div>
+    <div style="margin-top:26px" class="cols-2">
+      <div class="panel rv"><h3>Et derrière : les partenaires</h3><p>Courtage en crédit, assurance emprunteur, déménagement, travaux. L'apport d'affaires sur un acheteur qualifié se rémunère mieux qu'une annonce mise en avant — et c'est là que se trouve la marge à l'échelle.</p></div>
+      <div class="panel rv rv-1"><h3>Ce qu'on ne fera pas</h3><p>Pas de vente de leads aux agences : ce serait recréer l'intermédiaire qu'on retire. Pas de publicité dans le fil non plus — la lisibilité du catalogue est notre seul actif.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= MARCHÉ ======================= -->
+<section class="band-deep pad">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow">Le marché</p>
+      <h2>Un gisement de commissions de plusieurs milliards, en France seulement.</h2>
+    </div>
+    <div class="cols-3" style="margin-bottom:34px">
+      <div class="figure-block rv"><b>≈ 780 000</b><span>ventes de logements anciens par an en France</span></div>
+      <div class="figure-block rv rv-1"><b>≈ 6 Md€</b><span>de commissions d'agence versées chaque année</span></div>
+      <div class="figure-block rv rv-2"><b>≈ 1 sur 3</b><span>des ventes se fait déjà de particulier à particulier, sans outil dédié</span></div>
+    </div>
+    <p class="footnote rv">Ordres de grandeur issus des publications publiques du secteur (notaires, INSEE) et à re-sourcer précisément avant toute présentation à un investisseur. Ils servent ici à dimensionner l'opportunité, pas à la prouver.</p>
+
+    <hr class="rule" style="margin-block:clamp(46px,6vw,74px)">
+
+    <div class="sec-head rv"><p class="eyebrow">La trajectoire</p><h2>Un département d'abord. Pas la France entière.</h2>
+    <p class="lede">Une marketplace se gagne localement : il faut assez d'annonces dans une même ville pour qu'un acheteur ait une raison de revenir. On sature un territoire, puis on duplique.</p></div>
+    <div class="roadmap">
+      <div class="rm-row rv"><div class="rm-when">Mois 1 — 4</div><div class="rm-what"><b>MVP et 200 premières annonces</b><p>App iOS et Android, dépôt, fil, messagerie, vérification d'identité. Recrutement des annonces à la main, une par une, sur une seule agglomération.</p></div></div>
+      <div class="rm-row rv"><div class="rm-when">Mois 5 — 10</div><div class="rm-what"><b>Réputation et premières ventes conclues</b><p>Avis publics, estimation automatique, réseau de photographes et diagnostiqueurs partenaires. Objectif : les dix premiers compromis signés via la plateforme.</p></div></div>
+      <div class="rm-row rv"><div class="rm-when">Mois 11 — 18</div><div class="rm-what"><b>Duplication régionale</b><p>Trois nouvelles agglomérations avec le même manuel d'ouverture. Mise en place des partenariats courtage et assurance, qui deviennent la deuxième source de revenus.</p></div></div>
+      <div class="rm-row rv"><div class="rm-when">Après</div><div class="rm-what"><b>Le réflexe national</b><p>Devenir l'endroit où l'on regarde en premier quand on cherche un bien — et où l'on dépose sans se demander s'il faut passer par une agence.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= REJOINDRE ======================= -->
+<section class="band-dark pad">
+  <div class="wrap-narrow" style="text-align:left">
+    <div class="sec-head rv">
+      <p class="eyebrow">Ce qu'on cherche</p>
+      <h2>Un associé, pas un prestataire.</h2>
+      <p class="lede">Le prototype que tu viens de manipuler a été construit pour montrer une direction, pas pour être vendu. Ce qui manque maintenant, c'est quelqu'un qui prenne une moitié du problème.</p>
+    </div>
+    <div class="ask-list rv rv-1">
+      <p class="ask"><span class="ask-mark"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Un profil produit et technique</b> pour transformer ces écrans en vraie app mobile, avec la messagerie et la vérification d'identité.</span></p>
+      <p class="ask"><span class="ask-mark"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Quelqu'un qui connaît le terrain</b> — un notaire, un diagnostiqueur, un ancien agent immobilier. Le premier territoire se gagne avec des relations, pas avec de la publicité.</span></p>
+      <p class="ask"><span class="ask-mark"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>Six mois de conviction</b> avant de parler à un investisseur. Deux cents annonces réelles valent tous les tableurs du monde.</span></p>
+    </div>
+    <div class="hero-cta rv rv-2" style="margin-top:34px">
+      <a class="btn btn-brass" href="#produit">Revoir le prototype</a>
+      <a class="btn btn-ghost" href="mailto:">En parler de vive voix</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <span class="foot-brand"><span id="footKey"></span><b>AGENCIMMO</b></span>
+    <span>Prototype de démonstration — données et biens fictifs, aucun engagement.</span>
+  </div>
+</footer>
 
 <script>
 "use strict";
@@ -1150,7 +1512,6 @@ function viewProfile(){
         <div class="mini" style="cursor:default"><span class="status-pill wait">À venir</span>
           <span class="mini-main"><b>Diagnostics obligatoires</b><span>Pack à 189 €, sous 72 h</span></span></div>
       </div>
-      <button class="reset" data-reset>Réinitialiser la démo</button>
     </div>
   </div>`;
 }
@@ -1167,6 +1528,7 @@ function render(){
   views.replaceChildren(node);
   requestAnimationFrame(()=>node.classList.add("on"));
   renderTabs();
+  syncFeatures();
 }
 function go(tab){
   if(tab === "publish" && state.step === 3){ state.step = 0; state.draft = blankDraft(); }
@@ -1363,26 +1725,82 @@ tabbar.addEventListener("click", ev=>{
   if(b) go(b.dataset.tab);
 });
 
-
-/* ---------- réinitialisation entre deux démonstrations ---------- */
-views.addEventListener("click", ev=>{
-  if(!ev.target.closest("[data-reset]")) return;
-  try{ localStorage.removeItem(STORE); }catch(e){ /* stockage indisponible */ }
-  state.mine = []; state.favs = new Set(); state.myThread = null;
-  state.draft = blankDraft(); state.step = 0; state.filter = "tous";
-  state.current = null; state.chatOpen = null;
-  THREADS.forEach(t=>{ t.msgs = t.msgs.filter(m=>m.h !== "maintenant"); });
-  go("feed");
-  toast("Démo remise à zéro");
+/* ---------- synchronisation avec la liste de fonctionnalités ---------- */
+const featureList = document.getElementById("featureList");
+function syncFeatures(){
+  const map = {feed:"feed", detail:"detail", publish:"publish", chat:"chat", profile:"profile", favs:"feed"};
+  const key = map[state.tab] || "feed";
+  featureList.querySelectorAll(".feature").forEach(f=>f.classList.toggle("on", f.dataset.goto === key));
+}
+featureList.addEventListener("click", ev=>{
+  const b = ev.target.closest(".feature");
+  if(!b) return;
+  const g = b.dataset.goto;
+  if(g === "detail"){ openDetail(state.current || SEED[0].id); }
+  else if(g === "chat"){ state.chatOpen = allThreads()[0].id; state.tab = "chat"; render(); }
+  else go(g);
+  document.querySelector(".phone").scrollIntoView({behavior:"smooth", block:"nearest"});
 });
 
-/* ---------- logotype ---------- */
+/* ============================================================
+   7. ÉLÉMENTS DE PAGE
+   ============================================================ */
 function keySVG(size){
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="8.5" cy="8.5" r="4.6" stroke="#0E5C43" stroke-width="1.9"/>
     <path d="M11.8 11.8 20 20M17 17l2.4-2.4M14.4 14.4l2 2" stroke="#C89A47" stroke-width="1.9" stroke-linecap="round"/>
   </svg>`;
 }
+document.getElementById("footKey").innerHTML = keySVG(22);
+
+/* collage du héros */
+(function heroCollage(){
+  const el = document.getElementById("heroCollage");
+  const a = SEED[2], b = SEED[0];
+  el.innerHTML = `
+  <div style="position:relative;height:470px">
+    <div style="position:absolute;right:0;top:8px;width:74%;transform:rotate(3.2deg);opacity:.92;filter:saturate(.92)">
+      <div class="card" style="pointer-events:none;box-shadow:0 26px 48px -26px rgba(0,0,0,.7)">
+        <span class="card-media">${illus(b.kind, 7)}</span>
+        <span class="card-body"><span class="card-price"><b>${eur(b.prix)}</b><i>${Math.round(b.prix/b.m2)} €/m²</i></span>
+        <span class="card-meta"><span>${b.ville}</span><i class="sep"></i><span>${b.m2} m²</span></span></span>
+      </div>
+    </div>
+    <div style="position:absolute;left:0;top:78px;width:80%;transform:rotate(-2.4deg)">
+      <div class="card" style="pointer-events:none;box-shadow:0 34px 60px -28px rgba(0,0,0,.85)">
+        <span class="card-media">${illus(a.kind, 3)}
+          <span class="card-tags"><span class="tag">Particulier</span><span class="tag new">Vérifié</span></span></span>
+        <span class="card-body">
+          <span class="card-price"><b>${eur(a.prix)}</b><i>${Math.round(a.prix/a.m2)} €/m²</i></span>
+          <span class="card-title">${a.titre}</span>
+          <span class="card-meta"><span>${a.ville}</span><i class="sep"></i><span>${a.m2} m²</span><i class="sep"></i><span>${a.pieces} pièces</span>
+          <span class="dpe" style="background:${DPE_C[a.dpe]}">${a.dpe}</span></span>
+        </span>
+      </div>
+    </div>
+    <div style="position:absolute;right:1%;bottom:0;background:var(--pine-950);border:1px solid var(--line-dark);border-radius:16px;padding:13px 16px;box-shadow:0 20px 40px -20px rgba(0,0,0,.9)">
+      <div style="font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass)">Commission d'agence</div>
+      <div style="font-family:var(--f-mono);font-size:22px;font-weight:600;letter-spacing:-.03em;color:var(--on-dark);text-decoration:line-through;text-decoration-color:var(--rust);text-decoration-thickness:2px">38 025 €</div>
+      <div style="font-family:var(--f-mono);font-size:11px;color:var(--on-dark-mute);margin-top:3px">remplacée par 990 €</div>
+    </div>
+  </div>`;
+})();
+
+/* révélation au défilement */
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+}, {rootMargin:"0px 0px -8% 0px", threshold:.08});
+document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+
+/* horloge du téléphone */
+(function clock(){
+  const el = document.getElementById("clock");
+  const tick = ()=>{
+    const d = new Date();
+    el.textContent = d.getHours()+":"+String(d.getMinutes()).padStart(2,"0");
+  };
+  tick(); setInterval(tick, 20000);
+})();
 
 /* ---------- démarrage ---------- */
 load();
