@@ -16,9 +16,9 @@
   .line{
     display:flex; align-items:baseline; gap:10px;
     font-size:21px; line-height:1.35; padding:15px 2px;
-    border-bottom:1px solid #e2e0da;
+    border-bottom:2px solid #c9c6bd;
     cursor:pointer; white-space:pre-wrap; word-break:break-word;
-    touch-action:pan-y; user-select:none;
+    touch-action:none; user-select:none;
   }
   .line.blocked{ border-bottom:2px solid #b3423a; }
   .line-text{ flex:1; min-width:0; }
@@ -105,6 +105,7 @@
   function renderLine(t){
     var row = document.createElement("div");
     row.className = "line" + (t.blocked ? " blocked" : "");
+    row.dataset.id = t.id;
 
     var text = document.createElement("span");
     text.className = "line-text";
@@ -190,38 +191,64 @@
   }
 
   function attachGestures(el, t){
-    var startX = 0, dx = 0, dragging = false, moved = false;
-    var THRESHOLD = 70;
+    var startX = 0, startY = 0, dx = 0, dy = 0, dragging = false, moved = false, dir = null;
+    var H_THRESHOLD = 70, LOCK = 8;
 
     el.addEventListener("pointerdown", function(e){
-      startX = e.clientX; dx = 0; dragging = true; moved = false;
+      startX = e.clientX; startY = e.clientY; dx = 0; dy = 0;
+      dragging = true; moved = false; dir = null;
       el.setPointerCapture(e.pointerId);
       el.style.transition = "none";
     });
     el.addEventListener("pointermove", function(e){
       if(!dragging) return;
-      dx = e.clientX - startX;
-      if(Math.abs(dx) > 6) moved = true;
-      el.style.transform = "translateX(" + dx + "px)";
+      dx = e.clientX - startX; dy = e.clientY - startY;
+      if(!dir && (Math.abs(dx) > LOCK || Math.abs(dy) > LOCK)){
+        dir = Math.abs(dy) > Math.abs(dx) ? "v" : "h";
+        moved = true;
+        if(dir === "v"){ el.style.zIndex = "5"; el.style.boxShadow = "0 4px 10px rgba(0,0,0,.15)"; el.style.background = "#fafaf8"; }
+      }
+      if(dir === "h") el.style.transform = "translateX(" + dx + "px)";
+      else if(dir === "v") el.style.transform = "translateY(" + dy + "px)";
     });
-    function end(){
+    function end(e){
       if(!dragging) return;
       dragging = false;
       el.style.transition = "transform .15s ease";
       el.style.transform = "";
+      el.style.zIndex = ""; el.style.boxShadow = ""; el.style.background = "";
 
       if(!moved){
         openId = t.id; openType = "menu";
         render();
         return;
       }
-      if(Math.abs(dx) >= THRESHOLD){
+      if(dir === "h" && Math.abs(dx) >= H_THRESHOLD){
         openId = t.id; openType = "assign";
         render();
+      } else if(dir === "v"){
+        reorder(t, e.clientY);
       }
     }
     el.addEventListener("pointerup", end);
     el.addEventListener("pointercancel", end);
+  }
+
+  function reorder(t, clientY){
+    var rows = Array.prototype.slice.call(document.querySelectorAll(".line"));
+    var newIndex = 0;
+    rows.forEach(function(r){
+      if(r.dataset.id === t.id) return;
+      var rect = r.getBoundingClientRect();
+      var mid = rect.top + rect.height / 2;
+      if(clientY > mid) newIndex++;
+    });
+    var fromIndex = tasks.findIndex(function(x){ return x.id === t.id; });
+    if(fromIndex === -1) return;
+    tasks.splice(fromIndex, 1);
+    tasks.splice(newIndex, 0, t);
+    save();
+    render();
   }
 
   document.addEventListener("keydown", function(e){
