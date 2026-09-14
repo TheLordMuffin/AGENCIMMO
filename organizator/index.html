@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Organizator</title>
+<style>
+  :root{
+    --bg:#f6f5f1; --panel:#ffffff; --ink:#1c1b18; --ink-soft:#6b6860; --line:#e4e1d8;
+    --accent:#2f5d50;
+    --red:#b3423a; --red-soft:#fbe8e6;
+    --orange:#b8752a; --orange-soft:#fbeedd;
+    --purple:#6b4a8a; --purple-soft:#efe6f5;
+    --green:#3c7a4f; --green-soft:#e6f2e8;
+    --gray-soft:#eeece6;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(28,27,24,.06), 0 6px 16px rgba(28,27,24,.05);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"IBM Plex Mono","SF Mono",Menlo,monospace;
+    font-size:14px; line-height:1.5;
+    padding:20px 16px 60px;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  h1{font-size:20px; letter-spacing:.02em; margin:0 0 2px; font-weight:700;}
+  .sub{color:var(--ink-soft); margin:0 0 20px; font-size:13px;}
+
+  .stats{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+  .stat{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:8px 14px; cursor:pointer; flex:1; min-width:90px;}
+  .stat.active{outline:2px solid var(--accent); outline-offset:-1px;}
+  .stat b{display:block; font-size:19px; line-height:1.1;}
+  .stat span{color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:.04em;}
+  .stat.retard b{color:var(--red);}
+  .stat.encours b{color:var(--orange);}
+  .stat.bloque b{color:var(--purple);}
+
+  .toolbar{display:flex; gap:8px; margin-bottom:14px;}
+  input[type=text], input[type=date], textarea{
+    font-family:inherit; font-size:13px; padding:8px 10px;
+    border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--ink);
+  }
+  input[type=text]:focus, input[type=date]:focus, textarea:focus{outline:2px solid var(--accent); outline-offset:0;}
+  #search{flex:1;}
+
+  button{
+    font-family:inherit; cursor:pointer; border-radius:8px; border:1px solid var(--line);
+    background:var(--panel); color:var(--ink); padding:8px 12px; font-size:13px;
+  }
+  button:hover{border-color:var(--ink-soft);}
+  .btn-primary{background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600;}
+  .btn-primary:hover{opacity:.9;}
+  .btn-ghost{border-color:transparent; background:transparent; color:var(--ink-soft); padding:5px 8px;}
+  .btn-ghost:hover{color:var(--red); border-color:transparent;}
+  .btn-sm{padding:5px 9px; font-size:12px;}
+
+  /* status dot toggle */
+  .dot-toggle{display:inline-flex; border-radius:20px; overflow:hidden; border:1px solid var(--line); font-size:11px;}
+  .dot-toggle button{border:none; border-radius:0; padding:4px 10px; background:var(--panel); color:var(--ink-soft);}
+  .dot-toggle button.on.encours{background:var(--orange-soft); color:var(--orange); font-weight:600;}
+  .dot-toggle button.on.bloque{background:var(--purple-soft); color:var(--purple); font-weight:600;}
+
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px 14px; margin-bottom:10px; box-shadow:var(--shadow);
+  }
+  .card.done{opacity:.5;}
+  .card-head{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .card-title{display:flex; align-items:center; gap:8px; flex:1; min-width:0; cursor:pointer;}
+  .card-title b{font-size:14.5px;}
+  .card.done .card-title b{text-decoration:line-through;}
+  .chk{width:17px; height:17px; flex:none; accent-color:var(--accent); cursor:pointer;}
+  .deadline-tag{font-size:11px; padding:2px 8px; border-radius:12px; white-space:nowrap;}
+  .deadline-tag.retard{background:var(--red-soft); color:var(--red);}
+  .deadline-tag.today{background:var(--orange-soft); color:var(--orange);}
+  .deadline-tag.soon{background:var(--gray-soft); color:var(--ink-soft);}
+  .sub-count{font-size:11px; color:var(--ink-soft); white-space:nowrap;}
+
+  .card-body{margin-top:10px; padding-top:10px; border-top:1px solid var(--line);}
+  .field-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; align-items:center;}
+  .field-row label{font-size:11px; color:var(--ink-soft); display:flex; flex-direction:column; gap:3px;}
+  textarea{width:100%; min-height:44px; resize:vertical;}
+  .actions{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; align-items:center;}
+  .quick-relance{display:flex; gap:4px; align-items:center; font-size:12px; color:var(--ink-soft);}
+
+  .subtasks{margin-top:10px; padding-left:14px; border-left:2px solid var(--line);}
+  .subtask{display:flex; align-items:center; gap:8px; padding:6px 0;}
+  .subtask.done b{text-decoration:line-through; color:var(--ink-soft);}
+  .subtask b{font-size:13px; font-weight:500; flex:1; min-width:0; word-break:break-word;}
+  .subtask .del{margin-left:auto;}
+
+  .empty{color:var(--ink-soft); text-align:center; padding:40px 10px; font-size:13px;}
+
+  #form-panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:16px; display:none; box-shadow:var(--shadow);
+  }
+  #form-panel.open{display:block;}
+  #form-panel h2{font-size:14px; margin:0 0 10px;}
+
+  .tabs{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;}
+  .tab{
+    padding:6px 12px; border-radius:20px; border:1px solid var(--line); background:var(--panel);
+    cursor:pointer; font-size:12px; color:var(--ink-soft); white-space:nowrap;
+  }
+  .tab.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  .add-subtask-row{display:flex; gap:6px; margin-top:8px;}
+  .add-subtask-row input{flex:1;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Organizator</h1>
+  <p class="sub">Tes projets. Orange = à toi d'agir. Violet = tu attends quelqu'un.</p>
+
+  <div class="stats" id="stats"></div>
+
+  <div id="form-panel">
+    <h2>Nouveau projet</h2>
+    <div class="field-row">
+      <label>Nom
+        <input type="text" id="f-name" placeholder="Ex. Dossier Dupont — bilan 2025" style="min-width:260px">
+      </label>
+      <label>Deadline (optionnel)
+        <input type="date" id="f-deadline">
+      </label>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="f-save">Ajouter</button>
+      <button class="btn-ghost" id="f-cancel">Annuler</button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Rechercher...">
+    <button class="btn-primary" id="btn-new">+ Nouveau projet</button>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div id="list"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = "organizator:v2";
+  var state = {
+    filter: "tout",
+    search: "",
+    openId: null,
+    projects: load()
+  };
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.projects)); }catch(e){}
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function todayStr(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function addDays(dateStr, n){
+    var d = dateStr ? new Date(dateStr + "T00:00:00") : new Date();
+    d.setDate(d.getDate() + n);
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function daysBetween(dateStr){
+    var today = new Date(todayStr() + "T00:00:00");
+    var d = new Date(dateStr + "T00:00:00");
+    return Math.round((d - today) / 86400000);
+  }
+  function fmtDate(dateStr){
+    if(!dateStr) return "";
+    var p = dateStr.split("-");
+    return p[2] + "/" + p[1] + "/" + p[0];
+  }
+  function relLabel(dateStr){
+    var n = daysBetween(dateStr);
+    if(n < 0) return "retard " + (-n) + "j";
+    if(n === 0) return "aujourd'hui";
+    if(n === 1) return "demain";
+    return "J-" + n;
+  }
+  function deadlineBucket(dateStr){
+    var n = daysBetween(dateStr);
+    if(n < 0) return "retard";
+    if(n === 0) return "today";
+    if(n <= 3) return "soon";
+    return "";
+  }
+
+  function mkTask(name, deadline){
+    return {
+      id: uid(), name: name, status: "encours", done: false,
+      deadline: deadline || "", nextRelance: "", notes: "",
+      subtasks: [], history: [],
+      createdAt: Date.now(), updatedAt: Date.now()
+    };
+  }
+
+  // Effective status/deadline for a project, accounting for subtasks
+  function effectiveStatus(p){
+    if(!p.subtasks || !p.subtasks.length) return p.status;
+    var open = p.subtasks.filter(function(s){ return !s.done; });
+    if(!open.length) return p.status;
+    return open.some(function(s){ return s.status === "bloque"; }) ? "bloque" : "encours";
+  }
+  function effectiveDone(p){
+    if(p.subtasks && p.subtasks.length) return p.subtasks.every(function(s){ return s.done; });
+    return p.done;
+  }
+  function effectiveDeadline(p){
+    var dates = [];
+    if(p.deadline) dates.push(p.deadline);
+    (p.subtasks||[]).forEach(function(s){ if(!s.done && s.deadline) dates.push(s.deadline); });
+    if(!dates.length) return "";
+    dates.sort();
+    return dates[0];
+  }
+  function effectiveRelance(p){
+    var dates = [];
+    if(p.nextRelance) dates.push(p.nextRelance);
+    (p.subtasks||[]).forEach(function(s){ if(!s.done && s.nextRelance) dates.push(s.nextRelance); });
+    if(!dates.length) return "";
+    dates.sort();
+    return dates[0];
+  }
+  function urgencyDate(p){
+    var d1 = effectiveDeadline(p), d2 = effectiveRelance(p);
+    var dates = [d1, d2].filter(Boolean);
+    if(!dates.length) return null;
+    dates.sort();
+    return dates[0];
+  }
+
+  function matchesFilter(p){
+    if(state.filter === "tout") return true;
+    if(state.filter === "termine") return effectiveDone(p);
+    if(effectiveDone(p)) return false;
+    if(state.filter === "bloque") return effectiveStatus(p) === "bloque";
+    if(state.filter === "encours") return effectiveStatus(p) === "encours";
+    if(state.filter === "retard"){
+      var u = urgencyDate(p);
+      return u && daysBetween(u) < 0;
+    }
+    if(state.filter === "today"){
+      var u2 = urgencyDate(p);
+      return u2 && daysBetween(u2) === 0;
+    }
+    return true;
+  }
+  function matchesSearch(p){
+    if(!state.search) return true;
+    var s = state.search.toLowerCase();
+    if((p.name||"").toLowerCase().indexOf(s) > -1) return true;
+    return (p.subtasks||[]).some(function(t){ return (t.name||"").toLowerCase().indexOf(s) > -1; });
+  }
+
+  function sortProjects(list){
+    return list.slice().sort(function(a,b){
+      var da = effectiveDone(a), db = effectiveDone(b);
+      if(da !== db) return da ? 1 : -1;
+      var ua = urgencyDate(a), ub = urgencyDate(b);
+      if(ua && ub) return ua < ub ? -1 : ua > ub ? 1 : 0;
+      if(ua) return -1;
+      if(ub) return 1;
+      var sa = effectiveStatus(a) === "bloque" ? 0 : 1;
+      var sb = effectiveStatus(b) === "bloque" ? 0 : 1;
+      if(sa !== sb) return sa - sb;
+      return (b.updatedAt||0) - (a.updatedAt||0);
+    });
+  }
+
+  var TABS = [
+    {key:"tout", label:"Tout"},
+    {key:"retard", label:"En retard"},
+    {key:"today", label:"Aujourd'hui"},
+    {key:"encours", label:"À toi d'agir"},
+    {key:"bloque", label:"En attente"},
+    {key:"termine", label:"Terminés"}
+  ];
+
+  function render(){
+    renderStats();
+    renderTabs();
+    renderList();
+  }
+
+  function renderStats(){
+    var open = state.projects.filter(function(p){ return !effectiveDone(p); });
+    var retard = open.filter(function(p){ var u = urgencyDate(p); return u && daysBetween(u) < 0; }).length;
+    var encours = open.filter(function(p){ return effectiveStatus(p) === "encours"; }).length;
+    var bloque = open.filter(function(p){ return effectiveStatus(p) === "bloque"; }).length;
+    var el = document.getElementById("stats");
+    el.innerHTML = "";
+    [
+      {key:"retard", cls:"retard", n:retard, label:"En retard"},
+      {key:"encours", cls:"encours", n:encours, label:"À toi d'agir"},
+      {key:"bloque", cls:"bloque", n:bloque, label:"En attente"}
+    ].forEach(function(d){
+      var div = document.createElement("div");
+      div.className = "stat " + d.cls + (state.filter === d.key ? " active" : "");
+      div.innerHTML = "<b>" + d.n + "</b><span>" + d.label + "</span>";
+      div.addEventListener("click", function(){ state.filter = d.key; render(); });
+      el.appendChild(div);
+    });
+  }
+
+  function renderTabs(){
+    var el = document.getElementById("tabs");
+    el.innerHTML = "";
+    TABS.forEach(function(t){
+      var b = document.createElement("div");
+      b.className = "tab" + (state.filter === t.key ? " active" : "");
+      b.textContent = t.label;
+      b.addEventListener("click", function(){ state.filter = t.key; render(); });
+      el.appendChild(b);
+    });
+  }
+
+  function renderList(){
+    var el = document.getElementById("list");
+    el.innerHTML = "";
+    var list = state.projects.filter(matchesFilter).filter(matchesSearch);
+    list = sortProjects(list);
+    if(!list.length){
+      el.innerHTML = '<div class="empty">' + (state.projects.length ? "Rien ici avec ce filtre." : "Ajoute ton premier projet.") + '</div>';
+      return;
+    }
+    list.forEach(function(p){ el.appendChild(renderCard(p)); });
+  }
+
+  function statusToggle(current, onChange){
+    var wrap = document.createElement("div");
+    wrap.className = "dot-toggle";
+    [["encours","En cours"],["bloque","Bloqué"]].forEach(function(pair){
+      var b = document.createElement("button");
+      b.className = pair[0] + (current === pair[0] ? " on " + pair[0] : "");
+      b.textContent = pair[1];
+      b.addEventListener("click", function(e){ e.stopPropagation(); onChange(pair[0]); });
+      wrap.appendChild(b);
+    });
+    return wrap;
+  }
+
+  function renderCard(p){
+    var isDone = effectiveDone(p);
+    var eStatus = effectiveStatus(p);
+    var eDeadline = effectiveDeadline(p);
+    var hasSub = p.subtasks && p.subtasks.length;
+
+    var card = document.createElement("div");
+    card.className = "card" + (isDone ? " done" : "");
+
+    var head = document.createElement("div");
+    head.className = "card-head";
+
+    var chk = document.createElement("input");
+    chk.type = "checkbox"; chk.className = "chk"; chk.checked = isDone;
+    chk.disabled = !!hasSub;
+    chk.title = hasSub ? "Coche les sous-tâches individuellement" : "";
+    chk.addEventListener("click", function(e){
+      e.stopPropagation();
+      p.done = !p.done; p.updatedAt = Date.now(); save(); render();
+    });
+    head.appendChild(chk);
+
+    var title = document.createElement("div");
+    title.className = "card-title";
+    title.innerHTML = "<b>" + escapeHtml(p.name) + "</b>";
+    title.addEventListener("click", function(){ state.openId = state.openId === p.id ? null : p.id; render(); });
+    head.appendChild(title);
+
+    if(!isDone && !hasSub){
+      head.appendChild(statusToggle(eStatus, function(v){
+        p.status = v; p.updatedAt = Date.now(); save(); render();
+      }));
+    } else if(!isDone && hasSub){
+      var pill = document.createElement("span");
+      pill.className = "deadline-tag " + (eStatus === "bloque" ? "" : "");
+      pill.style.cssText = eStatus === "bloque" ? "background:var(--purple-soft);color:var(--purple);" : "background:var(--orange-soft);color:var(--orange);";
+      pill.textContent = eStatus === "bloque" ? "Bloqué" : "En cours";
+      head.appendChild(pill);
+    }
+
+    if(!isDone && eDeadline){
+      var tag = document.createElement("span");
+      var b = deadlineBucket(eDeadline);
+      tag.className = "deadline-tag " + b;
+      tag.textContent = relLabel(eDeadline);
+      head.appendChild(tag);
+    }
+
+    if(hasSub){
+      var doneCount = p.subtasks.filter(function(s){ return s.done; }).length;
+      var sc = document.createElement("span");
+      sc.className = "sub-count";
+      sc.textContent = doneCount + "/" + p.subtasks.length;
+      head.appendChild(sc);
+    }
+
+    card.appendChild(head);
+
+    if(state.openId === p.id){
+      card.appendChild(renderBody(p));
+    }
+
+    return card;
+  }
+
+  function renderBody(p){
+    var body = document.createElement("div");
+    body.className = "card-body";
+
+    if(!(p.subtasks && p.subtasks.length)){
+      var row = document.createElement("div");
+      row.className = "field-row";
+      row.innerHTML =
+        '<label>Deadline<input type="date" class="f-p-deadline" value="' + (p.deadline||"") + '"></label>' +
+        '<label>Prochaine relance<input type="date" class="f-p-relance" value="' + (p.nextRelance||"") + '"></label>';
+      body.appendChild(row);
+      row.querySelector(".f-p-deadline").addEventListener("change", function(e){
+        p.deadline = e.target.value; p.updatedAt = Date.now(); save(); render();
+      });
+      row.querySelector(".f-p-relance").addEventListener("change", function(e){
+        p.nextRelance = e.target.value; p.updatedAt = Date.now(); save(); render();
+      });
+
+      if(p.nextRelance){
+        var quick = document.createElement("div");
+        quick.className = "quick-relance";
+        quick.appendChild(document.createTextNode("Relancé, revenir dans : "));
+        [["+3j",3],["+1sem",7],["+2sem",14]].forEach(function(pair){
+          var qb = document.createElement("button");
+          qb.className = "btn-sm";
+          qb.textContent = pair[0];
+          qb.addEventListener("click", function(){
+            p.history.push({date: todayStr(), text:"Relance effectuée"});
+            p.nextRelance = addDays(todayStr(), pair[1]);
+            p.updatedAt = Date.now(); save(); render();
+          });
+          quick.appendChild(qb);
+        });
+        body.appendChild(quick);
+      }
+
+      var notes = document.createElement("textarea");
+      notes.placeholder = "Notes...";
+      notes.value = p.notes || "";
+      notes.addEventListener("change", function(e){ p.notes = e.target.value; p.updatedAt = Date.now(); save(); });
+      body.appendChild(notes);
+    }
+
+    // subtasks
+    var sub = document.createElement("div");
+    sub.className = "subtasks";
+    (p.subtasks||[]).forEach(function(t){
+      sub.appendChild(renderSubtask(p, t));
+    });
+    body.appendChild(sub);
+
+    var addRow = document.createElement("div");
+    addRow.className = "add-subtask-row";
+    var input = document.createElement("input");
+    input.type = "text"; input.placeholder = "+ sous-tâche...";
+    var addBtn = document.createElement("button");
+    addBtn.className = "btn-sm"; addBtn.textContent = "Ajouter";
+    function doAdd(){
+      var v = input.value.trim();
+      if(!v) return;
+      p.subtasks = p.subtasks || [];
+      p.subtasks.push(mkTask(v));
+      p.updatedAt = Date.now(); save(); render();
+    }
+    addBtn.addEventListener("click", doAdd);
+    input.addEventListener("keydown", function(e){ if(e.key === "Enter") doAdd(); });
+    addRow.appendChild(input); addRow.appendChild(addBtn);
+    body.appendChild(addRow);
+
+    var actions = document.createElement("div");
+    actions.className = "actions";
+    var delBtn = document.createElement("button");
+    delBtn.className = "btn-ghost btn-sm";
+    delBtn.textContent = "Supprimer le projet";
+    delBtn.addEventListener("click", function(){
+      if(confirm("Supprimer ce projet ?")){
+        state.projects = state.projects.filter(function(x){ return x.id !== p.id; });
+        save(); render();
+      }
+    });
+    actions.appendChild(delBtn);
+    body.appendChild(actions);
+
+    return body;
+  }
+
+  function renderSubtask(parent, t){
+    var row = document.createElement("div");
+    row.className = "subtask" + (t.done ? " done" : "");
+
+    var chk = document.createElement("input");
+    chk.type = "checkbox"; chk.className = "chk"; chk.checked = t.done;
+    chk.addEventListener("change", function(){
+      t.done = chk.checked; parent.updatedAt = Date.now(); save(); render();
+    });
+    row.appendChild(chk);
+
+    var b = document.createElement("b");
+    b.textContent = t.name;
+    row.appendChild(b);
+
+    if(!t.done){
+      row.appendChild(statusToggle(t.status, function(v){
+        t.status = v; parent.updatedAt = Date.now(); save(); render();
+      }));
+      if(t.deadline){
+        var tag = document.createElement("span");
+        tag.className = "deadline-tag " + deadlineBucket(t.deadline);
+        tag.textContent = relLabel(t.deadline);
+        row.appendChild(tag);
+      }
+      var dateBtn = document.createElement("input");
+      dateBtn.type = "date"; dateBtn.value = t.deadline || "";
+      dateBtn.style.cssText = "width:130px;";
+      dateBtn.addEventListener("change", function(e){
+        t.deadline = e.target.value; parent.updatedAt = Date.now(); save(); render();
+      });
+      row.appendChild(dateBtn);
+    }
+
+    var del = document.createElement("button");
+    del.className = "btn-ghost btn-sm del";
+    del.textContent = "×";
+    del.addEventListener("click", function(){
+      parent.subtasks = parent.subtasks.filter(function(x){ return x.id !== t.id; });
+      parent.updatedAt = Date.now(); save(); render();
+    });
+    row.appendChild(del);
+
+    return row;
+  }
+
+  function escapeHtml(s){
+    return String(s||"").replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  // --- new project form ---
+  var formPanel = document.getElementById("form-panel");
+  document.getElementById("btn-new").addEventListener("click", function(){
+    formPanel.classList.add("open");
+    document.getElementById("f-name").focus();
+  });
+  document.getElementById("f-cancel").addEventListener("click", function(){
+    formPanel.classList.remove("open");
+    document.getElementById("f-name").value = "";
+    document.getElementById("f-deadline").value = "";
+  });
+  document.getElementById("f-save").addEventListener("click", function(){
+    var name = document.getElementById("f-name").value.trim();
+    if(!name){ alert("Le nom est obligatoire."); return; }
+    var deadline = document.getElementById("f-deadline").value;
+    state.projects.push(mkTask(name, deadline));
+    save();
+    document.getElementById("f-name").value = "";
+    document.getElementById("f-deadline").value = "";
+    formPanel.classList.remove("open");
+    render();
+  });
+
+  document.getElementById("search").addEventListener("input", function(e){
+    state.search = e.target.value;
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
