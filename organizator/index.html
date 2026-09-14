@@ -17,30 +17,29 @@
     display:flex; align-items:baseline; gap:10px;
     font-size:21px; line-height:1.35; padding:15px 2px;
     border-bottom:1px solid #e2e0da;
-    cursor:grab; white-space:pre-wrap; word-break:break-word;
+    cursor:pointer; white-space:pre-wrap; word-break:break-word;
     touch-action:pan-y; user-select:none;
   }
   .line.blocked{ border-bottom:2px solid #b3423a; }
   .line-text{ flex:1; min-width:0; }
+  .line-assignee{ flex:none; font-size:14px; color:#2f5d50; }
   .line-date{ flex:none; font-size:14px; color:#83807a; }
   .line-date.retard{ color:#b3423a; font-weight:700; }
 
-  input.line-input{
-    width:100%; font:inherit; font-size:21px; line-height:1.35; padding:15px 2px;
-    border:none; border-bottom:1px solid #181816; background:transparent; color:#181816;
-    outline:none;
-  }
-
-  .menu{
+  .panel{
     display:flex; align-items:center; gap:16px; flex-wrap:wrap;
     padding:10px 2px 14px; border-bottom:1px solid #e2e0da; font-size:14px; color:#83807a;
   }
-  .menu .toggle{ cursor:pointer; user-select:none; }
-  .menu .toggle.on{ color:#b3423a; font-weight:700; text-decoration:underline; }
-  .menu input[type=date]{
+  .panel input[type=text]{
+    font:inherit; font-size:15px; border:none; border-bottom:1px solid #c9c6bd;
+    background:transparent; color:#181816; outline:none; min-width:140px;
+  }
+  .panel input[type=date]{
     font:inherit; font-size:14px; border:none; border-bottom:1px solid #c9c6bd;
     background:transparent; color:#181816; outline:none;
   }
+  .panel .toggle{ cursor:pointer; user-select:none; }
+  .panel .toggle.on{ color:#b3423a; font-weight:700; text-decoration:underline; }
 
   .add{
     text-align:center; padding:22px 0; font-size:22px; color:#c9c6bd;
@@ -58,19 +57,21 @@
 <script>
 (function(){
   "use strict";
-  var KEY = "organizator:v3";
+  var KEY = "organizator:v4";
   var tasks = load();
-  var editingId = null;
-  var menuId = null;
+  var openId = null;   // id of task with an open panel
+  var openType = null; // "menu" (nom/bloqué/deadline) ou "assign" (déléguer)
 
   function load(){
     try{
       var raw = localStorage.getItem(KEY);
       if(raw) return JSON.parse(raw);
-      var old = localStorage.getItem("organizator:v2");
+      var old = localStorage.getItem("organizator:v3");
       if(old){
         var parsed = JSON.parse(old);
-        return parsed.map(function(p){ return { id: uid(), text: p.name || "", blocked:false, deadline:"", archived:false }; });
+        return parsed.map(function(t){
+          return { id: t.id || uid(), text: t.text || "", blocked: !!t.blocked, deadline: t.deadline || "", assignee: "" };
+        });
       }
     }catch(e){}
     return [];
@@ -94,13 +95,10 @@
   function render(){
     var el = document.getElementById("list");
     el.innerHTML = "";
-    tasks.filter(function(t){ return !t.archived; }).forEach(function(t){
-      if(t.id === editingId){
-        el.appendChild(renderInput(t));
-      } else {
-        el.appendChild(renderLine(t));
-        if(t.id === menuId) el.appendChild(renderMenu(t));
-      }
+    tasks.forEach(function(t){
+      el.appendChild(renderLine(t));
+      if(openId === t.id && openType === "menu") el.appendChild(renderMenu(t));
+      if(openId === t.id && openType === "assign") el.appendChild(renderAssign(t));
     });
   }
 
@@ -113,6 +111,13 @@
     text.textContent = t.text;
     row.appendChild(text);
 
+    if(t.assignee){
+      var a = document.createElement("span");
+      a.className = "line-assignee";
+      a.textContent = "→ " + t.assignee;
+      row.appendChild(a);
+    }
+
     if(t.deadline){
       var d = document.createElement("span");
       d.className = "line-date" + (daysBetween(t.deadline) < 0 ? " retard" : "");
@@ -120,69 +125,71 @@
       row.appendChild(d);
     }
 
-    attachSwipe(row, t);
+    attachGestures(row, t);
     return row;
   }
 
   function renderMenu(t){
-    var menu = document.createElement("div");
-    menu.className = "menu";
+    var panel = document.createElement("div");
+    panel.className = "panel";
+
+    var nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.value = t.text;
+    function commitName(){
+      var v = nameInput.value.trim();
+      if(v === t.text) return; // rien n'a changé : pas de re-rendu, ça casserait un clic en cours sur un autre contrôle du panneau
+      if(!v){ tasks = tasks.filter(function(x){ return x.id !== t.id; }); openId = null; }
+      else { t.text = v; }
+      save(); render();
+    }
+    nameInput.addEventListener("keydown", function(e){
+      if(e.key === "Enter") commitName();
+      if(e.key === "Escape"){ openId = null; render(); }
+    });
+    nameInput.addEventListener("blur", commitName);
+    panel.appendChild(nameInput);
 
     var toggle = document.createElement("span");
     toggle.className = "toggle" + (t.blocked ? " on" : "");
     toggle.textContent = "bloqué";
-    toggle.addEventListener("click", function(){
-      t.blocked = !t.blocked;
-      save(); render();
-    });
-    menu.appendChild(toggle);
+    toggle.addEventListener("click", function(){ t.blocked = !t.blocked; save(); render(); });
+    panel.appendChild(toggle);
 
     var dateInput = document.createElement("input");
     dateInput.type = "date";
     dateInput.value = t.deadline || "";
-    dateInput.addEventListener("change", function(e){
-      t.deadline = e.target.value;
-      save(); render();
-    });
-    menu.appendChild(dateInput);
+    dateInput.addEventListener("change", function(e){ t.deadline = e.target.value; save(); render(); });
+    panel.appendChild(dateInput);
 
-    return menu;
+    return panel;
   }
 
-  function renderInput(t){
+  function renderAssign(t){
+    var panel = document.createElement("div");
+    panel.className = "panel";
+
     var input = document.createElement("input");
     input.type = "text";
-    input.className = "line-input";
-    input.value = t.text;
-    input.addEventListener("keydown", function(e){
-      if(e.key === "Enter"){ commit(t, input.value); }
-      if(e.key === "Escape"){ editingId = null; render(); }
-    });
-    input.addEventListener("blur", function(){ commit(t, input.value); });
-    setTimeout(function(){ input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 0);
-    return input;
-  }
-
-  function commit(t, value){
-    var v = value.trim();
-    editingId = null;
-    if(!v){
-      tasks = tasks.filter(function(x){ return x.id !== t.id; });
-    } else {
-      t.text = v;
+    input.placeholder = "assigné à…";
+    input.value = t.assignee || "";
+    function commit(){
+      t.assignee = input.value.trim();
+      openId = null;
+      save(); render();
     }
-    save();
-    render();
+    input.addEventListener("keydown", function(e){
+      if(e.key === "Enter") commit();
+      if(e.key === "Escape"){ openId = null; render(); }
+    });
+    input.addEventListener("blur", commit);
+    panel.appendChild(input);
+
+    setTimeout(function(){ input.focus(); }, 0);
+    return panel;
   }
 
-  function archive(t){
-    t.archived = true;
-    if(menuId === t.id) menuId = null;
-    save();
-    render();
-  }
-
-  function attachSwipe(el, t){
+  function attachGestures(el, t){
     var startX = 0, dx = 0, dragging = false, moved = false;
     var THRESHOLD = 70;
 
@@ -204,15 +211,12 @@
       el.style.transform = "";
 
       if(!moved){
-        editingId = t.id; menuId = null;
+        openId = t.id; openType = "menu";
         render();
         return;
       }
-      if(dx <= -THRESHOLD){
-        archive(t);
-      } else if(dx >= THRESHOLD){
-        menuId = menuId === t.id ? null : t.id;
-        editingId = null;
+      if(Math.abs(dx) >= THRESHOLD){
+        openId = t.id; openType = "assign";
         render();
       }
     }
@@ -220,11 +224,14 @@
     el.addEventListener("pointercancel", end);
   }
 
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && openId){ openId = null; openType = null; render(); }
+  });
+
   document.getElementById("btn-add").addEventListener("click", function(){
-    var t = { id: uid(), text: "", blocked:false, deadline:"", archived:false };
+    var t = { id: uid(), text: "", blocked:false, deadline:"", assignee:"" };
     tasks.push(t);
-    editingId = t.id;
-    menuId = null;
+    openId = t.id; openType = "menu";
     save();
     render();
   });
