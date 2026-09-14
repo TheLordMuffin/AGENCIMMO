@@ -108,12 +108,21 @@
 
   .add-subtask-row{display:flex; gap:6px; margin-top:8px;}
   .add-subtask-row input{flex:1;}
+
+  .punch-banner{
+    background:var(--ink); color:#fff; border-radius:var(--radius);
+    padding:12px 16px; margin-bottom:16px; font-weight:700; font-size:14px;
+    border-left:6px solid var(--red);
+  }
+  .notif-toggle.on{background:var(--accent); color:#fff; border-color:var(--accent);}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Organizator</h1>
   <p class="sub">Tes projets. Orange = à toi d'agir. Violet = tu attends quelqu'un.</p>
+
+  <div id="punch"></div>
 
   <div class="stats" id="stats"></div>
 
@@ -136,6 +145,7 @@
   <div class="toolbar">
     <input type="text" id="search" placeholder="Rechercher...">
     <button class="btn-primary" id="btn-new">+ Nouveau projet</button>
+    <button class="btn-sm" id="btn-notif">🔕 Activer les rappels</button>
   </div>
 
   <div class="tabs" id="tabs"></div>
@@ -289,10 +299,47 @@
     {key:"termine", label:"Terminés"}
   ];
 
+  var PUNCH_RETARD = [
+    "Sérieux, tu comptes laisser traîner « {name} » encore longtemps ?",
+    "Bouge ton fion, « {name} » prend la poussière depuis {n}j.",
+    "{n}j de retard sur « {name} ». Ça avance pas tout seul.",
+    "« {name} » attend. Toi aussi, apparemment.",
+    "Tu scrolles ou tu règles « {name} » ?",
+    "T'es sérieux de laisser traîner « {name} » comme ça ?",
+    "Ok stop, on s'occupe de « {name} » maintenant."
+  ];
+  var PUNCH_TODAY = [
+    "« {name} » c'est AUJOURD'HUI. Go.",
+    "Pas demain. Aujourd'hui. « {name} ».",
+    "Dernière ligne droite pour « {name} », fonce."
+  ];
+
+  function pickPunchline(){
+    var open = state.projects.filter(function(p){ return !effectiveDone(p); });
+    var worst = null, worstN = 1;
+    open.forEach(function(p){
+      var u = urgencyDate(p);
+      if(!u) return;
+      var n = daysBetween(u);
+      if(n < worstN){ worstN = n; worst = p; }
+    });
+    if(!worst) return null;
+    var pool = worstN < 0 ? PUNCH_RETARD : PUNCH_TODAY;
+    var line = pool[Math.floor(Math.random() * pool.length)];
+    return line.replace("{name}", worst.name).replace("{n}", Math.abs(worstN));
+  }
+
   function render(){
+    renderPunch();
     renderStats();
     renderTabs();
     renderList();
+  }
+
+  function renderPunch(){
+    var el = document.getElementById("punch");
+    var line = pickPunchline();
+    el.innerHTML = line ? '<div class="punch-banner">' + escapeHtml(line) + '</div>' : "";
   }
 
   function renderStats(){
@@ -582,6 +629,51 @@
     state.search = e.target.value;
     render();
   });
+
+  // --- rappels façon coup de pied (Notification API, tant que l'onglet reste ouvert) ---
+  var NOTIF_KEY = "organizator:notif";
+  var notifTimer = null;
+
+  function notifEnabled(){
+    try{
+      return localStorage.getItem(NOTIF_KEY) === "1" && "Notification" in window && Notification.permission === "granted";
+    }catch(e){ return false; }
+  }
+  function updateNotifBtn(){
+    var b = document.getElementById("btn-notif");
+    var on = notifEnabled();
+    b.textContent = on ? "🔔 Rappels actifs" : "🔕 Activer les rappels";
+    b.className = "btn-sm" + (on ? " notif-toggle on" : " notif-toggle");
+  }
+  function fireNotification(){
+    if(!notifEnabled()) return;
+    var line = pickPunchline();
+    if(!line) return;
+    try{ new Notification("Organizator", { body: line }); }catch(e){}
+  }
+  function startNotifTimer(){
+    if(notifTimer) clearInterval(notifTimer);
+    notifTimer = setInterval(fireNotification, 25 * 60 * 1000);
+  }
+  document.getElementById("btn-notif").addEventListener("click", function(){
+    if(!("Notification" in window)){ alert("Ton navigateur ne supporte pas les notifications."); return; }
+    if(notifEnabled()){
+      localStorage.setItem(NOTIF_KEY, "0");
+      if(notifTimer) clearInterval(notifTimer);
+      updateNotifBtn();
+      return;
+    }
+    Notification.requestPermission().then(function(perm){
+      if(perm === "granted"){
+        localStorage.setItem(NOTIF_KEY, "1");
+        startNotifTimer();
+        fireNotification();
+      }
+      updateNotifBtn();
+    });
+  });
+  if(notifEnabled()) startNotifTimer();
+  updateNotifBtn();
 
   render();
 })();
