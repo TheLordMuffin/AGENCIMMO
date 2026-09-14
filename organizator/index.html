@@ -5,488 +5,116 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Organizator</title>
 <style>
-  :root{
-    --bg:#fafaf8; --ink:#181816; --ink-soft:#83807a; --line:#e2e0da;
-    --orange:#b8752a; --purple:#6b4a8a; --red:#b3423a; --accent:#2f5d50;
-  }
   *{box-sizing:border-box;}
   body{
-    margin:0; background:var(--bg); color:var(--ink);
+    margin:0; background:#fafaf8; color:#181816;
     font-family:"IBM Plex Mono","SF Mono",Menlo,monospace;
-    font-size:13.5px; line-height:1.5;
-    padding:20px 16px 60px;
+    padding:24px 20px 80px;
   }
-  .wrap{max-width:640px; margin:0 auto;}
-  h1{font-size:16px; margin:0 0 14px; font-weight:700;}
+  .wrap{max-width:600px; margin:0 auto;}
 
-  .punch{color:var(--red); font-weight:700; margin-bottom:14px;}
-
-  .add-row{display:flex; gap:8px; margin-bottom:10px;}
-  .add-row input{flex:1;}
-
-  input[type=text], input[type=date], textarea{
-    font-family:inherit; font-size:13.5px; padding:4px 2px;
-    border:none; border-bottom:1px solid var(--line); background:transparent; color:var(--ink);
+  .line{
+    font-size:21px; line-height:1.35; padding:15px 2px;
+    border-bottom:1px solid #e2e0da;
+    cursor:text; white-space:pre-wrap; word-break:break-word;
   }
-  input[type=text]:focus, input[type=date]:focus, textarea:focus{outline:none; border-bottom-color:var(--ink);}
-  textarea{width:100%; min-height:36px; resize:vertical; display:block;}
-
-  a, .link{color:var(--ink-soft); text-decoration:none; cursor:pointer;}
-  a:hover, .link:hover{color:var(--ink); text-decoration:underline;}
-
-  .filters{margin-bottom:14px; color:var(--ink-soft);}
-  .filters .link{margin-right:10px;}
-  .filters .link.active{color:var(--ink); text-decoration:underline; font-weight:700;}
-
-  .row{
-    display:flex; align-items:center; gap:8px; padding:5px 0;
-    border-bottom:1px solid var(--line);
+  input.line-input{
+    width:100%; font:inherit; font-size:21px; line-height:1.35; padding:15px 2px;
+    border:none; border-bottom:1px solid #181816; background:transparent; color:#181816;
+    outline:none;
   }
-  .row.done{opacity:.45;}
-  .row.done .name{text-decoration:line-through;}
-  .chk{width:14px; height:14px; flex:none; accent-color:var(--accent); cursor:pointer;}
-  .dot{width:9px; height:9px; border-radius:50%; flex:none; cursor:pointer; background:var(--ink-soft);}
-  .dot.encours{background:var(--orange);}
-  .dot.bloque{background:var(--purple);}
-  .name{flex:1; min-width:0; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .tag{font-size:11.5px; white-space:nowrap; flex:none;}
-  .tag.retard{color:var(--red); font-weight:700;}
-  .tag.today{color:var(--orange); font-weight:700;}
-  .tag.soon{color:var(--ink-soft);}
-  .sub-count{font-size:11.5px; color:var(--ink-soft); flex:none;}
-  .del{color:var(--ink-soft); flex:none; padding:0 2px;}
-  .del:hover{color:var(--red);}
 
-  .detail{padding:6px 0 10px 22px; border-bottom:1px solid var(--line);}
-  .detail-line{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:6px; color:var(--ink-soft); font-size:12.5px;}
-  .detail-line label{display:flex; align-items:center; gap:4px;}
-  .quick{display:flex; gap:8px; align-items:center; margin-bottom:6px; font-size:12px; color:var(--ink-soft);}
-
-  .subrow{padding-left:14px; border-left:1px solid var(--line); margin-top:4px;}
-  .add-sub{display:flex; gap:6px; margin-top:4px; padding-left:14px;}
-  .add-sub input{flex:1; font-size:12.5px;}
-
-  .empty{color:var(--ink-soft); padding:20px 0;}
+  .add{
+    text-align:center; padding:22px 0; font-size:22px; color:#c9c6bd;
+    cursor:pointer; user-select:none;
+  }
+  .add:hover{color:#83807a;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Organizator</h1>
-
-  <div id="punch"></div>
-
-  <div class="add-row">
-    <input type="text" id="f-name" placeholder="+ tâche… (Entrée pour ajouter)">
-  </div>
-
-  <div class="filters" id="filters"></div>
-
   <div id="list"></div>
-
-  <p style="margin-top:16px;"><span class="link" id="btn-notif">activer les rappels</span></p>
+  <div class="add" id="btn-add">+</div>
 </div>
 
 <script>
 (function(){
   "use strict";
-  var STORAGE_KEY = "organizator:v2";
-  var state = { filter: "tout", openId: null, projects: load() };
+  var KEY = "organizator:v3";
+  var tasks = load();
+  var editingId = null;
 
   function load(){
-    try{ var raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; }
-    catch(e){ return []; }
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw) return JSON.parse(raw);
+      var old = localStorage.getItem("organizator:v2");
+      if(old){
+        var parsed = JSON.parse(old);
+        return parsed.map(function(p){ return { id: uid(), text: p.name || "" }; });
+      }
+    }catch(e){}
+    return [];
   }
-  function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.projects)); }catch(e){} }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(tasks)); }catch(e){} }
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-  function todayStr(){
-    var d = new Date();
-    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-  }
-  function addDays(dateStr, n){
-    var d = dateStr ? new Date(dateStr + "T00:00:00") : new Date();
-    d.setDate(d.getDate() + n);
-    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-  }
-  function daysBetween(dateStr){
-    var today = new Date(todayStr() + "T00:00:00");
-    var d = new Date(dateStr + "T00:00:00");
-    return Math.round((d - today) / 86400000);
-  }
-  function relLabel(dateStr){
-    var n = daysBetween(dateStr);
-    if(n < 0) return "retard " + (-n) + "j";
-    if(n === 0) return "aujourd'hui";
-    if(n === 1) return "demain";
-    return "J-" + n;
-  }
-  function deadlineBucket(dateStr){
-    var n = daysBetween(dateStr);
-    if(n < 0) return "retard";
-    if(n === 0) return "today";
-    if(n <= 3) return "soon";
-    return "";
-  }
-
-  function mkTask(name){
-    return {
-      id: uid(), name: name, status: "encours", done: false,
-      deadline: "", nextRelance: "", notes: "",
-      subtasks: [], history: [], createdAt: Date.now(), updatedAt: Date.now()
-    };
-  }
-
-  function effectiveStatus(p){
-    if(!p.subtasks || !p.subtasks.length) return p.status;
-    var open = p.subtasks.filter(function(s){ return !s.done; });
-    if(!open.length) return p.status;
-    return open.some(function(s){ return s.status === "bloque"; }) ? "bloque" : "encours";
-  }
-  function effectiveDone(p){
-    if(p.subtasks && p.subtasks.length) return p.subtasks.every(function(s){ return s.done; });
-    return p.done;
-  }
-  function effectiveDeadline(p){
-    var dates = [];
-    if(p.deadline) dates.push(p.deadline);
-    (p.subtasks||[]).forEach(function(s){ if(!s.done && s.deadline) dates.push(s.deadline); });
-    if(!dates.length) return "";
-    dates.sort();
-    return dates[0];
-  }
-  function effectiveRelance(p){
-    var dates = [];
-    if(p.nextRelance) dates.push(p.nextRelance);
-    (p.subtasks||[]).forEach(function(s){ if(!s.done && s.nextRelance) dates.push(s.nextRelance); });
-    if(!dates.length) return "";
-    dates.sort();
-    return dates[0];
-  }
-  function urgencyDate(p){
-    var dates = [effectiveDeadline(p), effectiveRelance(p)].filter(Boolean);
-    if(!dates.length) return null;
-    dates.sort();
-    return dates[0];
-  }
-
-  var FILTERS = [
-    {key:"tout", label:"tout"},
-    {key:"retard", label:"en retard"},
-    {key:"today", label:"aujourd'hui"},
-    {key:"encours", label:"à toi d'agir"},
-    {key:"bloque", label:"en attente"},
-    {key:"termine", label:"terminés"}
-  ];
-
-  function matchesFilter(p){
-    if(state.filter === "tout") return true;
-    if(state.filter === "termine") return effectiveDone(p);
-    if(effectiveDone(p)) return false;
-    if(state.filter === "bloque") return effectiveStatus(p) === "bloque";
-    if(state.filter === "encours") return effectiveStatus(p) === "encours";
-    if(state.filter === "retard"){ var u = urgencyDate(p); return u && daysBetween(u) < 0; }
-    if(state.filter === "today"){ var u2 = urgencyDate(p); return u2 && daysBetween(u2) === 0; }
-    return true;
-  }
-
-  function sortProjects(list){
-    return list.slice().sort(function(a,b){
-      var da = effectiveDone(a), db = effectiveDone(b);
-      if(da !== db) return da ? 1 : -1;
-      var ua = urgencyDate(a), ub = urgencyDate(b);
-      if(ua && ub) return ua < ub ? -1 : ua > ub ? 1 : 0;
-      if(ua) return -1;
-      if(ub) return 1;
-      var sa = effectiveStatus(a) === "bloque" ? 0 : 1;
-      var sb = effectiveStatus(b) === "bloque" ? 0 : 1;
-      if(sa !== sb) return sa - sb;
-      return (b.updatedAt||0) - (a.updatedAt||0);
-    });
-  }
-
-  var PUNCH_RETARD = [
-    "Sérieux, tu comptes laisser traîner « {name} » encore longtemps ?",
-    "Bouge ton fion, « {name} » prend la poussière depuis {n}j.",
-    "{n}j de retard sur « {name} ». Ça avance pas tout seul.",
-    "« {name} » attend. Toi aussi, apparemment.",
-    "T'es sérieux de laisser traîner « {name} » comme ça ?"
-  ];
-  var PUNCH_TODAY = [
-    "« {name} » c'est AUJOURD'HUI. Go.",
-    "Pas demain. Aujourd'hui. « {name} ».",
-    "Dernière ligne droite pour « {name} », fonce."
-  ];
-  function pickPunchline(){
-    var open = state.projects.filter(function(p){ return !effectiveDone(p); });
-    var worst = null, worstN = 1;
-    open.forEach(function(p){
-      var u = urgencyDate(p);
-      if(!u) return;
-      var n = daysBetween(u);
-      if(n < worstN){ worstN = n; worst = p; }
-    });
-    if(!worst) return null;
-    var pool = worstN < 0 ? PUNCH_RETARD : PUNCH_TODAY;
-    var line = pool[Math.floor(Math.random() * pool.length)];
-    return line.replace("{name}", worst.name).replace("{n}", Math.abs(worstN));
-  }
-
-  function escapeHtml(s){
-    return String(s||"").replace(/[&<>"']/g, function(c){
-      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
-    });
-  }
 
   function render(){
-    renderPunch();
-    renderFilters();
-    renderList();
-  }
-
-  function renderPunch(){
-    var el = document.getElementById("punch");
-    var line = pickPunchline();
-    el.innerHTML = line ? '<div class="punch">' + escapeHtml(line) + '</div>' : "";
-  }
-
-  function renderFilters(){
-    var el = document.getElementById("filters");
-    el.innerHTML = "";
-    FILTERS.forEach(function(f){
-      var s = document.createElement("span");
-      s.className = "link" + (state.filter === f.key ? " active" : "");
-      s.textContent = f.label;
-      s.addEventListener("click", function(){ state.filter = f.key; render(); });
-      el.appendChild(s);
-    });
-  }
-
-  function renderList(){
     var el = document.getElementById("list");
     el.innerHTML = "";
-    var list = sortProjects(state.projects.filter(matchesFilter));
-    if(!list.length){
-      el.innerHTML = '<div class="empty">' + (state.projects.length ? "rien ici." : "ajoute ta première tâche au-dessus.") + '</div>';
-      return;
-    }
-    list.forEach(function(p){
-      el.appendChild(renderRow(p));
-      if(state.openId === p.id) el.appendChild(renderDetail(p));
-    });
-  }
-
-  function renderRow(p){
-    var isDone = effectiveDone(p);
-    var eStatus = effectiveStatus(p);
-    var eDeadline = effectiveDeadline(p);
-    var hasSub = p.subtasks && p.subtasks.length;
-
-    var row = document.createElement("div");
-    row.className = "row" + (isDone ? " done" : "");
-
-    var chk = document.createElement("input");
-    chk.type = "checkbox"; chk.className = "chk"; chk.checked = isDone;
-    chk.disabled = !!hasSub;
-    chk.addEventListener("click", function(e){
-      e.stopPropagation();
-      p.done = !p.done; p.updatedAt = Date.now(); save(); render();
-    });
-    row.appendChild(chk);
-
-    if(!isDone){
-      var dot = document.createElement("span");
-      dot.className = "dot " + eStatus;
-      dot.title = eStatus === "bloque" ? "Bloqué — clic pour passer en cours" : "En cours — clic pour bloquer";
-      dot.addEventListener("click", function(e){
-        e.stopPropagation();
-        if(hasSub) return;
-        p.status = p.status === "bloque" ? "encours" : "bloque";
-        p.updatedAt = Date.now(); save(); render();
-      });
-      row.appendChild(dot);
-    }
-
-    var name = document.createElement("span");
-    name.className = "name";
-    name.textContent = p.name + (hasSub ? "  (" + p.subtasks.filter(function(s){return s.done;}).length + "/" + p.subtasks.length + ")" : "");
-    name.addEventListener("click", function(){ state.openId = state.openId === p.id ? null : p.id; render(); });
-    row.appendChild(name);
-
-    if(!isDone && eDeadline){
-      var tag = document.createElement("span");
-      tag.className = "tag " + deadlineBucket(eDeadline);
-      tag.textContent = relLabel(eDeadline);
-      row.appendChild(tag);
-    }
-
-    var del = document.createElement("span");
-    del.className = "del"; del.textContent = "×";
-    del.addEventListener("click", function(e){
-      e.stopPropagation();
-      if(confirm("Supprimer « " + p.name + " » ?")){
-        state.projects = state.projects.filter(function(x){ return x.id !== p.id; });
-        save(); render();
+    tasks.forEach(function(t){
+      if(t.id === editingId){
+        el.appendChild(renderInput(t));
+      } else {
+        el.appendChild(renderLine(t));
       }
     });
-    row.appendChild(del);
-
-    return row;
   }
 
-  function renderDetail(p){
-    var wrap = document.createElement("div");
-    wrap.className = "detail";
-
-    var line = document.createElement("div");
-    line.className = "detail-line";
-    line.innerHTML =
-      '<label>échéance <input type="date" class="d-deadline" value="' + (p.deadline||"") + '"></label>' +
-      '<label>relance <input type="date" class="d-relance" value="' + (p.nextRelance||"") + '"></label>';
-    wrap.appendChild(line);
-    line.querySelector(".d-deadline").addEventListener("change", function(e){
-      p.deadline = e.target.value; p.updatedAt = Date.now(); save(); render();
+  function renderLine(t){
+    var div = document.createElement("div");
+    div.className = "line";
+    div.textContent = t.text;
+    div.addEventListener("click", function(){
+      editingId = t.id;
+      render();
     });
-    line.querySelector(".d-relance").addEventListener("change", function(e){
-      p.nextRelance = e.target.value; p.updatedAt = Date.now(); save(); render();
-    });
+    return div;
+  }
 
-    if(p.nextRelance){
-      var quick = document.createElement("div");
-      quick.className = "quick";
-      quick.appendChild(document.createTextNode("relancé, revenir dans :"));
-      [["+3j",3],["+1sem",7],["+2sem",14]].forEach(function(pair){
-        var s = document.createElement("span");
-        s.className = "link"; s.textContent = " " + pair[0];
-        s.addEventListener("click", function(){
-          p.history.push({date: todayStr(), text:"Relance effectuée"});
-          p.nextRelance = addDays(todayStr(), pair[1]);
-          p.updatedAt = Date.now(); save(); render();
-        });
-        quick.appendChild(s);
-      });
-      wrap.appendChild(quick);
-    }
-
-    var notes = document.createElement("textarea");
-    notes.placeholder = "notes…";
-    notes.value = p.notes || "";
-    notes.addEventListener("change", function(e){ p.notes = e.target.value; p.updatedAt = Date.now(); save(); });
-    wrap.appendChild(notes);
-
-    var subWrap = document.createElement("div");
-    subWrap.className = "subrow";
-    (p.subtasks||[]).forEach(function(t){ subWrap.appendChild(renderSubRow(p, t)); });
-    wrap.appendChild(subWrap);
-
-    var addSub = document.createElement("div");
-    addSub.className = "add-sub";
+  function renderInput(t){
     var input = document.createElement("input");
-    input.type = "text"; input.placeholder = "+ sous-tâche…";
-    function doAdd(){
-      var v = input.value.trim();
-      if(!v) return;
-      p.subtasks = p.subtasks || [];
-      p.subtasks.push(mkTask(v));
-      p.updatedAt = Date.now(); save(); render();
-    }
-    input.addEventListener("keydown", function(e){ if(e.key === "Enter") doAdd(); });
-    addSub.appendChild(input);
-    wrap.appendChild(addSub);
-
-    return wrap;
-  }
-
-  function renderSubRow(parent, t){
-    var row = document.createElement("div");
-    row.className = "row" + (t.done ? " done" : "");
-    row.style.borderBottom = "none";
-
-    var chk = document.createElement("input");
-    chk.type = "checkbox"; chk.className = "chk"; chk.checked = t.done;
-    chk.addEventListener("change", function(){ t.done = chk.checked; parent.updatedAt = Date.now(); save(); render(); });
-    row.appendChild(chk);
-
-    if(!t.done){
-      var dot = document.createElement("span");
-      dot.className = "dot " + t.status;
-      dot.addEventListener("click", function(){
-        t.status = t.status === "bloque" ? "encours" : "bloque";
-        parent.updatedAt = Date.now(); save(); render();
-      });
-      row.appendChild(dot);
-    }
-
-    var name = document.createElement("span");
-    name.className = "name"; name.style.cursor = "default";
-    name.textContent = t.name;
-    row.appendChild(name);
-
-    if(!t.done){
-      var dateInput = document.createElement("input");
-      dateInput.type = "date"; dateInput.value = t.deadline || "";
-      dateInput.style.fontSize = "11.5px"; dateInput.style.width = "112px";
-      dateInput.addEventListener("change", function(e){
-        t.deadline = e.target.value; parent.updatedAt = Date.now(); save(); render();
-      });
-      row.appendChild(dateInput);
-    }
-
-    var del = document.createElement("span");
-    del.className = "del"; del.textContent = "×";
-    del.addEventListener("click", function(){
-      parent.subtasks = parent.subtasks.filter(function(x){ return x.id !== t.id; });
-      parent.updatedAt = Date.now(); save(); render();
+    input.type = "text";
+    input.className = "line-input";
+    input.value = t.text;
+    input.addEventListener("keydown", function(e){
+      if(e.key === "Enter"){ commit(t, input.value); }
+      if(e.key === "Escape"){ editingId = null; render(); }
     });
-    row.appendChild(del);
-
-    return row;
+    input.addEventListener("blur", function(){ commit(t, input.value); });
+    setTimeout(function(){ input.focus(); input.setSelectionRange(input.value.length, input.value.length); }, 0);
+    return input;
   }
 
-  document.getElementById("f-name").addEventListener("keydown", function(e){
-    if(e.key !== "Enter") return;
-    var name = e.target.value.trim();
-    if(!name) return;
-    state.projects.push(mkTask(name));
+  function commit(t, value){
+    var v = value.trim();
+    editingId = null;
+    if(!v){
+      tasks = tasks.filter(function(x){ return x.id !== t.id; });
+    } else {
+      t.text = v;
+    }
     save();
-    e.target.value = "";
+    render();
+  }
+
+  document.getElementById("btn-add").addEventListener("click", function(){
+    var t = { id: uid(), text: "" };
+    tasks.push(t);
+    editingId = t.id;
+    save();
     render();
   });
-
-  // --- rappels (Notification API, tant que l'onglet reste ouvert) ---
-  var NOTIF_KEY = "organizator:notif";
-  var notifTimer = null;
-
-  function notifEnabled(){
-    try{ return localStorage.getItem(NOTIF_KEY) === "1" && "Notification" in window && Notification.permission === "granted"; }
-    catch(e){ return false; }
-  }
-  function updateNotifBtn(){
-    document.getElementById("btn-notif").textContent = notifEnabled() ? "rappels actifs" : "activer les rappels";
-  }
-  function fireNotification(){
-    if(!notifEnabled()) return;
-    var line = pickPunchline();
-    if(!line) return;
-    try{ new Notification("Organizator", { body: line }); }catch(e){}
-  }
-  function startNotifTimer(){
-    if(notifTimer) clearInterval(notifTimer);
-    notifTimer = setInterval(fireNotification, 25 * 60 * 1000);
-  }
-  document.getElementById("btn-notif").addEventListener("click", function(){
-    if(!("Notification" in window)){ alert("Ton navigateur ne supporte pas les notifications."); return; }
-    if(notifEnabled()){
-      localStorage.setItem(NOTIF_KEY, "0");
-      if(notifTimer) clearInterval(notifTimer);
-      updateNotifBtn();
-      return;
-    }
-    Notification.requestPermission().then(function(perm){
-      if(perm === "granted"){ localStorage.setItem(NOTIF_KEY, "1"); startNotifTimer(); fireNotification(); }
-      updateNotifBtn();
-    });
-  });
-  if(notifEnabled()) startNotifTimer();
-  updateNotifBtn();
 
   render();
 })();
