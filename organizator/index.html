@@ -14,14 +14,32 @@
   .wrap{max-width:600px; margin:0 auto;}
 
   .line{
+    display:flex; align-items:baseline; gap:10px;
     font-size:21px; line-height:1.35; padding:15px 2px;
     border-bottom:1px solid #e2e0da;
-    cursor:text; white-space:pre-wrap; word-break:break-word;
+    cursor:grab; white-space:pre-wrap; word-break:break-word;
+    touch-action:pan-y; user-select:none;
   }
+  .line.blocked{ border-bottom:2px solid #b3423a; }
+  .line-text{ flex:1; min-width:0; }
+  .line-date{ flex:none; font-size:14px; color:#83807a; }
+  .line-date.retard{ color:#b3423a; font-weight:700; }
+
   input.line-input{
     width:100%; font:inherit; font-size:21px; line-height:1.35; padding:15px 2px;
     border:none; border-bottom:1px solid #181816; background:transparent; color:#181816;
     outline:none;
+  }
+
+  .menu{
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    padding:10px 2px 14px; border-bottom:1px solid #e2e0da; font-size:14px; color:#83807a;
+  }
+  .menu .toggle{ cursor:pointer; user-select:none; }
+  .menu .toggle.on{ color:#b3423a; font-weight:700; text-decoration:underline; }
+  .menu input[type=date]{
+    font:inherit; font-size:14px; border:none; border-bottom:1px solid #c9c6bd;
+    background:transparent; color:#181816; outline:none;
   }
 
   .add{
@@ -43,6 +61,7 @@
   var KEY = "organizator:v3";
   var tasks = load();
   var editingId = null;
+  var menuId = null;
 
   function load(){
     try{
@@ -51,35 +70,83 @@
       var old = localStorage.getItem("organizator:v2");
       if(old){
         var parsed = JSON.parse(old);
-        return parsed.map(function(p){ return { id: uid(), text: p.name || "" }; });
+        return parsed.map(function(p){ return { id: uid(), text: p.name || "", blocked:false, deadline:"", archived:false }; });
       }
     }catch(e){}
     return [];
   }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(tasks)); }catch(e){} }
   function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function todayStr(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function daysBetween(dateStr){
+    var today = new Date(todayStr() + "T00:00:00");
+    var d = new Date(dateStr + "T00:00:00");
+    return Math.round((d - today) / 86400000);
+  }
+  function fmtDate(dateStr){
+    var p = dateStr.split("-");
+    return p[2] + "/" + p[1];
+  }
 
   function render(){
     var el = document.getElementById("list");
     el.innerHTML = "";
-    tasks.forEach(function(t){
+    tasks.filter(function(t){ return !t.archived; }).forEach(function(t){
       if(t.id === editingId){
         el.appendChild(renderInput(t));
       } else {
         el.appendChild(renderLine(t));
+        if(t.id === menuId) el.appendChild(renderMenu(t));
       }
     });
   }
 
   function renderLine(t){
-    var div = document.createElement("div");
-    div.className = "line";
-    div.textContent = t.text;
-    div.addEventListener("click", function(){
-      editingId = t.id;
-      render();
+    var row = document.createElement("div");
+    row.className = "line" + (t.blocked ? " blocked" : "");
+
+    var text = document.createElement("span");
+    text.className = "line-text";
+    text.textContent = t.text;
+    row.appendChild(text);
+
+    if(t.deadline){
+      var d = document.createElement("span");
+      d.className = "line-date" + (daysBetween(t.deadline) < 0 ? " retard" : "");
+      d.textContent = fmtDate(t.deadline);
+      row.appendChild(d);
+    }
+
+    attachSwipe(row, t);
+    return row;
+  }
+
+  function renderMenu(t){
+    var menu = document.createElement("div");
+    menu.className = "menu";
+
+    var toggle = document.createElement("span");
+    toggle.className = "toggle" + (t.blocked ? " on" : "");
+    toggle.textContent = "bloqué";
+    toggle.addEventListener("click", function(){
+      t.blocked = !t.blocked;
+      save(); render();
     });
-    return div;
+    menu.appendChild(toggle);
+
+    var dateInput = document.createElement("input");
+    dateInput.type = "date";
+    dateInput.value = t.deadline || "";
+    dateInput.addEventListener("change", function(e){
+      t.deadline = e.target.value;
+      save(); render();
+    });
+    menu.appendChild(dateInput);
+
+    return menu;
   }
 
   function renderInput(t){
@@ -108,10 +175,56 @@
     render();
   }
 
+  function archive(t){
+    t.archived = true;
+    if(menuId === t.id) menuId = null;
+    save();
+    render();
+  }
+
+  function attachSwipe(el, t){
+    var startX = 0, dx = 0, dragging = false, moved = false;
+    var THRESHOLD = 70;
+
+    el.addEventListener("pointerdown", function(e){
+      startX = e.clientX; dx = 0; dragging = true; moved = false;
+      el.setPointerCapture(e.pointerId);
+      el.style.transition = "none";
+    });
+    el.addEventListener("pointermove", function(e){
+      if(!dragging) return;
+      dx = e.clientX - startX;
+      if(Math.abs(dx) > 6) moved = true;
+      el.style.transform = "translateX(" + dx + "px)";
+    });
+    function end(){
+      if(!dragging) return;
+      dragging = false;
+      el.style.transition = "transform .15s ease";
+      el.style.transform = "";
+
+      if(!moved){
+        editingId = t.id; menuId = null;
+        render();
+        return;
+      }
+      if(dx <= -THRESHOLD){
+        archive(t);
+      } else if(dx >= THRESHOLD){
+        menuId = menuId === t.id ? null : t.id;
+        editingId = null;
+        render();
+      }
+    }
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+  }
+
   document.getElementById("btn-add").addEventListener("click", function(){
-    var t = { id: uid(), text: "" };
+    var t = { id: uid(), text: "", blocked:false, deadline:"", archived:false };
     tasks.push(t);
     editingId = t.id;
+    menuId = null;
     save();
     render();
   });
